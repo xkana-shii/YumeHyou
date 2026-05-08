@@ -16,7 +16,7 @@ import com.axiel7.anihyou.core.domain.repositoryModule
 import com.axiel7.anihyou.core.network.apiModule
 import com.axiel7.anihyou.core.network.networkModule
 import com.axiel7.anihyou.feature.worker.workerModule
-import com.axiel7.anihyou.yumehyou.core.yumehyouModule
+import com.axiel7.anihyou.architecture.core.yumehyouModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.workmanager.koin.workManagerFactory

@@ -1,4 +1,4 @@
-package com.axiel7.anihyou.yumehyou.search
+package com.axiel7.anihyou.architecture.search
 
 import com.axiel7.anihyou.core.domain.repository.SearchRepository
 import org.koin.dsl.module

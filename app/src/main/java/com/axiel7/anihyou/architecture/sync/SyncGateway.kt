@@ -1,4 +1,4 @@
-package com.axiel7.anihyou.yumehyou.sync
+package com.axiel7.anihyou.architecture.sync
 
 import com.axiel7.anihyou.core.domain.repository.MediaListRepository
 import com.axiel7.anihyou.core.domain.repository.UserRepository
