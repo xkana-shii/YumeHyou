@@ -5,6 +5,7 @@ import com.axiel7.anihyou.core.domain.dataStoreModule
 import com.axiel7.anihyou.core.domain.repositoryModule
 import com.axiel7.anihyou.core.network.apiModule
 import com.axiel7.anihyou.core.network.networkModule
+import com.axiel7.yumehyou.wear.BuildConfig
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.component.KoinComponent

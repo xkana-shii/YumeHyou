@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
-        android:name=".App"
+        android:name="com.axiel7.anihyou.wear.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -27,7 +27,7 @@
             android:value="false" />
 
         <activity
-            android:name=".ui.screens.main.MainActivity"
+            android:name="com.axiel7.anihyou.wear.ui.screens.main.MainActivity"
             android:exported="true"
             android:taskAffinity=""
             android:theme="@style/WearActivityTheme.Starting">
@@ -44,7 +44,7 @@
 
                 <data
                     android:host="wear-auth"
-                    android:scheme="anihyou" />
+                    android:scheme="yumehyou" />
 
             </intent-filter>
         </activity>

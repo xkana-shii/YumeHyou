@@ -126,7 +126,7 @@ android {
 }
 
 base {
-    archivesName = "anihyou-${versionProps.getProperty("name")}"
+    archivesName = "yumehyou-${versionProps.getProperty("name")}"
 }
 
 kotlin {
