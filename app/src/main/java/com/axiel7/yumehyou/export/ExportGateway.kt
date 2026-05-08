@@ -1,4 +1,4 @@
-package com.axiel7.anihyou.architecture.export
+package com.axiel7.yumehyou.export
 
 import com.axiel7.anihyou.core.domain.repository.DefaultPreferencesRepository
 import com.axiel7.anihyou.core.domain.repository.UserRepository

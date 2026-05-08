@@ -1,4 +1,4 @@
-package com.axiel7.anihyou.architecture.tracker
+package com.axiel7.yumehyou.tracker
 
 import com.axiel7.anihyou.core.domain.repository.MediaListRepository
 import org.koin.dsl.module

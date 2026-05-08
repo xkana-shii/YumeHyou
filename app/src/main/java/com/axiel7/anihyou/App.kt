@@ -16,7 +16,14 @@ import com.axiel7.anihyou.core.domain.repositoryModule
 import com.axiel7.anihyou.core.network.apiModule
 import com.axiel7.anihyou.core.network.networkModule
 import com.axiel7.anihyou.feature.worker.workerModule
-import com.axiel7.anihyou.architecture.core.yumehyouModule
+import com.axiel7.yumehyou.activity.activityModule
+import com.axiel7.yumehyou.core.yumehyouCoreModule
+import com.axiel7.yumehyou.export.exportModule
+import com.axiel7.yumehyou.metadata.metadataModule
+import com.axiel7.yumehyou.search.searchModule
+import com.axiel7.yumehyou.settings.settingsModule
+import com.axiel7.yumehyou.sync.syncModule
+import com.axiel7.yumehyou.tracker.trackerModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.workmanager.koin.workManagerFactory
@@ -41,7 +48,14 @@ class App : Application(), KoinComponent, KoinStartup, SingletonImageLoader.Fact
             repositoryModule,
             viewModelModule,
             workerModule,
-            yumehyouModule,
+            yumehyouCoreModule,
+            metadataModule,
+            trackerModule,
+            syncModule,
+            searchModule,
+            activityModule,
+            exportModule,
+            settingsModule,
         )
     }
 

@@ -1,12 +1,12 @@
-package com.axiel7.anihyou.architecture.core
+package com.axiel7.yumehyou.core
 
-import com.axiel7.anihyou.architecture.activity.ActivityGateway
-import com.axiel7.anihyou.architecture.export.ExportGateway
-import com.axiel7.anihyou.architecture.metadata.MetadataProvider
-import com.axiel7.anihyou.architecture.search.SearchGateway
-import com.axiel7.anihyou.architecture.settings.SettingsGateway
-import com.axiel7.anihyou.architecture.sync.SyncGateway
-import com.axiel7.anihyou.architecture.tracker.TrackerGateway
+import com.axiel7.yumehyou.activity.ActivityGateway
+import com.axiel7.yumehyou.export.ExportGateway
+import com.axiel7.yumehyou.metadata.MetadataProvider
+import com.axiel7.yumehyou.search.SearchGateway
+import com.axiel7.yumehyou.settings.SettingsGateway
+import com.axiel7.yumehyou.sync.SyncGateway
+import com.axiel7.yumehyou.tracker.TrackerGateway
 import org.koin.dsl.module
 
 data class YumeHyouLayerInfo(

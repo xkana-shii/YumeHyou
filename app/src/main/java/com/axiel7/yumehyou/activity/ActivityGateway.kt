@@ -1,4 +1,4 @@
-package com.axiel7.anihyou.architecture.activity
+package com.axiel7.yumehyou.activity
 
 import com.axiel7.anihyou.core.domain.repository.ActivityRepository
 import com.axiel7.anihyou.core.domain.repository.NotificationRepository

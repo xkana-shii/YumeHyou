@@ -1,4 +1,4 @@
-package com.axiel7.anihyou.architecture.settings
+package com.axiel7.yumehyou.settings
 
 import com.axiel7.anihyou.core.domain.repository.DefaultPreferencesRepository
 import com.axiel7.anihyou.core.domain.repository.ListPreferencesRepository

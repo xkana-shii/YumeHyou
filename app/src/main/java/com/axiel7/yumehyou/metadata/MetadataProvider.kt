@@ -1,4 +1,4 @@
-package com.axiel7.anihyou.architecture.metadata
+package com.axiel7.yumehyou.metadata
 
 import com.axiel7.anihyou.core.domain.repository.MediaRepository
 import org.koin.dsl.module
