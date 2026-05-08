@@ -15,7 +15,7 @@
     </queries>
 
     <application
-        android:name="com.axiel7.anihyou.App"
+        android:name=".App"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:enableOnBackInvokedCallback="true"
@@ -28,7 +28,7 @@
         android:theme="@style/Theme.MySplash"
         tools:targetApi="33">
         <activity
-            android:name="com.axiel7.anihyou.ui.screens.main.MainActivity"
+            android:name=".ui.screens.main.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.AniHyou"
             android:windowSoftInputMode="adjustResize">
@@ -166,7 +166,7 @@
         </activity>
 
         <receiver
-            android:name="com.axiel7.anihyou.widget.AiringWidgetReceiver"
+            android:name=".widget.AiringWidgetReceiver"
             android:enabled="@bool/glance_appwidget_available"
             android:exported="false">
             <intent-filter>
