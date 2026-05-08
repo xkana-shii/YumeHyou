@@ -36,7 +36,7 @@ class LoginRepository (
                 defaultPreferencesRepository.saveViewerInfo(viewer)
             }
         } else {
-            Log.e("AniHyou", "Error saving user data: ${response.errorString}")
+            Log.e("YumeHyou", "Error saving user data: ${response.errorString}")
         }
     }
 

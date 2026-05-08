@@ -45,7 +45,7 @@
 
                 <data
                     android:host="auth-response"
-                    android:scheme="anihyou" />
+                    android:scheme="yumehyou" />
 
             </intent-filter>
 
@@ -57,7 +57,7 @@
 
                 <data
                     android:host="wear-auth"
-                    android:scheme="anihyou" />
+                    android:scheme="yumehyou" />
 
             </intent-filter>
 

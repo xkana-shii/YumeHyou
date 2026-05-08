@@ -533,5 +533,5 @@
         <item quantity="one">%d min</item>
         <item quantity="other">%d min</item>
     </plurals>
-    <string name="login_required_in_phone">Per utilizzare questa app devi prima effettuare l\'accesso aprendo l\'app AniHyou installata sul tuo telefono</string>
+    <string name="login_required_in_phone">Per utilizzare questa app devi prima effettuare l\'accesso aprendo l\'app YumeHyou installata sul tuo telefono</string>
 </resources>

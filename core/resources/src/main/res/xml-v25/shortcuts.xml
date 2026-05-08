@@ -8,6 +8,6 @@
         <intent
             android:action="search"
             android:targetClass="com.axiel7.anihyou.ui.screens.main.MainActivity"
-            android:targetPackage="com.axiel7.anihyou" />
+            android:targetPackage="com.axiel7.yumehyou" />
     </shortcut>
 </shortcuts>
