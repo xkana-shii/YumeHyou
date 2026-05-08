@@ -115,7 +115,7 @@ private fun UserAboutViewPreview() {
                 aboutHtml = "<p>こんにちは！アクです。</p>\n" +
                         "<blockquote>\n" +
                         "<p>Developing an iOS AniList client:<br />\n" +
-                        "<a href=\"https://github.com/axiel7/AniHyou\">https://github.com/axiel7/AniHyou</a></p>\n" +
+                        "<a href=\"https://github.com/xkana-shii/YumeHyou\">https://github.com/xkana-shii/YumeHyou</a></p>\n" +
                         "</blockquote>",
                 onRefresh = {},
                 navigateToUserMediaList = {}
