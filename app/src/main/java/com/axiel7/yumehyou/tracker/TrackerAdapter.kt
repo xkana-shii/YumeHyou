@@ -199,11 +199,11 @@ abstract class BaseTrackerAdapter : TrackerAdapter {
         )
     }
 
-    override suspend fun onAuthRedirect(uri: Uri) = unsupported()
+    override suspend fun onAuthRedirect(uri: Uri): Unit = unsupported<Unit>()
 
-    override suspend fun onNewToken(token: String) = unsupported()
+    override suspend fun onNewToken(token: String): Unit = unsupported<Unit>()
 
-    override suspend fun logOut() = unsupported()
+    override suspend fun logOut(): Unit = unsupported<Unit>()
 
     override fun getLibraryCollection(
         userId: Int,
