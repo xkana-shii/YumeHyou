@@ -1,5 +1,7 @@
 package com.axiel7.yumehyou.core.model
 
+import java.util.Locale
+
 data class Title(
     val preferred: String,
     val romaji: String? = null,
@@ -20,7 +22,7 @@ data class Title(
         value: String,
         seen: MutableSet<String>,
     ) {
-        if (seen.add(value.lowercase())) {
+        if (seen.add(value.lowercase(Locale.ROOT))) {
             add(value)
         }
     }

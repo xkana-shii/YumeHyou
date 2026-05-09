@@ -75,5 +75,5 @@ data class PartialDate(
     }
 
     private fun isLeapYear(year: Int) =
-        Year.isLeap(year.toLong())
+        Year.of(year).isLeap
 }
