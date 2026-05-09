@@ -5,6 +5,7 @@ import com.axiel7.yumehyou.core.model.TrackerType
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -85,7 +86,7 @@ class TrackerCapabilitiesTest {
     fun trackerManagerResolvesAdaptersByTrackerType() {
         val manager = DefaultTrackerManager(defaultTrackerAdapters)
 
-        assertEquals(null, manager.getAdapter(TrackerType.MY_ANIME_LIST))
+        assertNull(manager.getAdapter(TrackerType.MY_ANIME_LIST))
         assertNotNull(manager.getAdapter(TrackerType.MANGA_UPDATES))
     }
 }
