@@ -2,6 +2,7 @@ package com.axiel7.yumehyou.tracker
 
 import android.net.Uri
 import com.axiel7.anihyou.core.base.DataResult
+import com.axiel7.anihyou.core.model.media.advancedScoresMap
 import com.axiel7.anihyou.core.network.fragment.BasicMediaListEntry
 import com.axiel7.anihyou.core.network.fragment.FuzzyDate
 import com.axiel7.anihyou.core.network.type.MediaListSort
@@ -127,6 +128,8 @@ class MalTrackerAdapter(
                 repeat = repeat,
                 notes = notes,
             )
+
+            else -> DataResult.Error("Could not resolve MAL media type for update")
         }
     }
 
@@ -139,7 +142,7 @@ class MalTrackerAdapter(
         mediaId = mediaId,
         status = status,
         score = oldEntry?.score,
-        advancedScores = oldEntry?.advancedScores,
+        advancedScores = oldEntry?.advancedScoresMap()?.values,
         progress = oldEntry?.progress,
         progressVolumes = oldEntry?.progressVolumes,
         startedAt = oldEntry?.startedAt?.fuzzyDate,
@@ -160,7 +163,7 @@ class MalTrackerAdapter(
         mediaId = mediaId,
         status = oldEntry?.status,
         score = oldEntry?.score,
-        advancedScores = oldEntry?.advancedScores,
+        advancedScores = oldEntry?.advancedScoresMap()?.values,
         progress = progress,
         progressVolumes = progressVolumes,
         startedAt = oldEntry?.startedAt?.fuzzyDate,
@@ -220,7 +223,7 @@ class MalTrackerAdapter(
         characterId: Int?,
         staffId: Int?,
         studioId: Int?,
-    ): DataResult<*> = DataResult.Error(
+    ): DataResult<*> = DataResult.Error<String>(
         "MyAnimeList favorites are currently read-only in this adapter. Update operations are not supported by official MAL API",
     )
 
@@ -300,18 +303,22 @@ class MalTrackerAdapter(
         oldEntry: BasicMediaListEntry?,
         progressVolumes: Int?,
     ): MediaType {
-        return oldEntry?.media?.type ?: if (progressVolumes != null) MediaType.MANGA else MediaType.ANIME
+        return if (progressVolumes != null || oldEntry?.progressVolumes != null) {
+            MediaType.MANGA
+        } else {
+            MediaType.ANIME
+        }
     }
 
     private suspend fun fetchFavoritesForCurrentUser(): DataResult<String> {
         val username = resolveCurrentUsername()
-            ?: return DataResult.Error("Could not resolve MAL username for favorites")
+            ?: return DataResult.Error<String>("Could not resolve MAL username for favorites")
         return malMetadataProvider.getUserFavorites(username)
     }
 
     private suspend fun fetchSocialForCurrentUser(): DataResult<String> {
         val username = resolveCurrentUsername()
-            ?: return DataResult.Error("Could not resolve MAL username for social data")
+            ?: return DataResult.Error<String>("Could not resolve MAL username for social data")
         return malMetadataProvider.getUserSocial(username)
     }
 

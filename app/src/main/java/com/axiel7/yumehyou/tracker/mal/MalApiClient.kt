@@ -196,5 +196,6 @@ private fun MediaListStatus.toMalStatus(mediaType: MediaType): String {
         MediaListStatus.DROPPED -> "dropped"
         MediaListStatus.PLANNING -> if (mediaType == MediaType.MANGA) "plan_to_read" else "plan_to_watch"
         MediaListStatus.REPEATING -> if (mediaType == MediaType.MANGA) "reading" else "watching"
+        else -> if (mediaType == MediaType.MANGA) "plan_to_read" else "plan_to_watch"
     }
 }

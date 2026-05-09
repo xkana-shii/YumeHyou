@@ -1,5 +1,7 @@
 package com.axiel7.yumehyou.tracker
 
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import com.axiel7.anihyou.core.domain.repository.ActivityRepository
 import com.axiel7.anihyou.core.domain.repository.DefaultPreferencesRepository
 import com.axiel7.anihyou.core.domain.repository.FavoriteRepository
@@ -82,11 +84,11 @@ class AniListTrackerGateway(
 ) : TrackerGateway
 
 val trackerModule = module {
-    single { MalSessionStore(dataStore = get()) }
-    single { MalAuthService(sessionStore = get(), client = get()) }
-    single { MalApiClient(client = get(), authService = get()) }
-    single { JikanApiClient(client = get()) }
-    single { MalMetadataProvider(malApiClient = get(), jikanApiClient = get()) }
+    single<MalSessionStore> { MalSessionStore(dataStore = get<DataStore<Preferences>>()) }
+    single<MalAuthService> { MalAuthService(sessionStore = get(), client = get()) }
+    single<MalApiClient> { MalApiClient(client = get(), authService = get()) }
+    single<JikanApiClient> { JikanApiClient(client = get()) }
+    single<MalMetadataProvider> { MalMetadataProvider(malApiClient = get(), jikanApiClient = get()) }
 
     single<TrackerGateway> {
         AniListTrackerGateway(
