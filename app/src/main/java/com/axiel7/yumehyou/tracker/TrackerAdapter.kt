@@ -1,6 +1,7 @@
 package com.axiel7.yumehyou.tracker
 
 import android.net.Uri
+import com.axiel7.anihyou.core.base.DataResult
 import com.axiel7.anihyou.core.network.fragment.BasicMediaListEntry
 import com.axiel7.anihyou.core.network.fragment.FuzzyDate
 import com.axiel7.anihyou.core.network.type.ActivitySort
@@ -30,7 +31,7 @@ interface TrackerAdapter {
         fetchFromNetwork: Boolean = false,
         chunk: Int?,
         perChunk: Int?,
-    ): Any
+    ): Flow<*>
 
     fun getAnimeList(
         userId: Int,
@@ -39,7 +40,7 @@ interface TrackerAdapter {
         fetchFromNetwork: Boolean = false,
         page: Int?,
         perPage: Int? = 25,
-    ): Any
+    ): Flow<*>
 
     fun getMangaList(
         userId: Int,
@@ -48,7 +49,7 @@ interface TrackerAdapter {
         fetchFromNetwork: Boolean = false,
         page: Int?,
         perPage: Int? = 25,
-    ): Any
+    ): Flow<*>
 
     fun updateEntry(
         oldEntry: BasicMediaListEntry? = null,
@@ -61,38 +62,38 @@ interface TrackerAdapter {
         startedAt: FuzzyDate? = oldEntry?.startedAt?.fuzzyDate,
         completedAt: FuzzyDate? = oldEntry?.completedAt?.fuzzyDate,
         repeat: Int? = null,
-        private: Boolean? = null,
+        isPrivate: Boolean? = null,
         hiddenFromStatusLists: Boolean? = null,
         notes: String? = null,
-    ): Any
+    ): Flow<*>
 
     fun updateStatus(
         oldEntry: BasicMediaListEntry? = null,
         mediaId: Int,
         status: MediaListStatus,
-    ): Any
+    ): Flow<*>
 
     fun updateProgress(
         oldEntry: BasicMediaListEntry? = null,
         mediaId: Int,
         progress: Int? = null,
         progressVolumes: Int? = null,
-    ): Any
+    ): Flow<*>
 
     fun updateScore(
         oldEntry: BasicMediaListEntry? = null,
         mediaId: Int,
         score: Double? = null,
         advancedScores: Collection<Double>? = null,
-    ): Any
+    ): Flow<*>
 
-    fun getMyProfile(fetchFromNetwork: Boolean = false): Any
+    fun getMyProfile(fetchFromNetwork: Boolean = false): Flow<*>
 
     fun getProfile(
         userId: Int? = null,
         username: String? = null,
         fetchFromNetwork: Boolean = false,
-    ): Any
+    ): Flow<*>
 
     fun getActivityFeed(
         isFollowing: Boolean,
@@ -100,7 +101,7 @@ interface TrackerAdapter {
         fetchFromNetwork: Boolean = false,
         page: Int,
         perPage: Int = 25,
-    ): Any
+    ): Flow<*>
 
     fun getUserActivity(
         userId: Int,
@@ -108,14 +109,14 @@ interface TrackerAdapter {
         fetchFromNetwork: Boolean = false,
         page: Int,
         perPage: Int = 25,
-    ): Any
+    ): Flow<*>
 
     fun getFavoriteAnime(
         userId: Int,
         page: Int,
         perPage: Int = 25,
         fetchFromNetwork: Boolean,
-    ): Any
+    ): Flow<*>
 
     suspend fun toggleFavorite(
         animeId: Int? = null,
@@ -123,69 +124,80 @@ interface TrackerAdapter {
         characterId: Int? = null,
         staffId: Int? = null,
         studioId: Int? = null,
-    ): Any
+    ): DataResult<*>
 
     fun getFavoriteManga(
         userId: Int,
         page: Int,
         perPage: Int = 25,
         fetchFromNetwork: Boolean,
-    ): Any
+    ): Flow<*>
 
     fun getFavoriteCharacters(
         userId: Int,
         page: Int,
         perPage: Int = 25,
         fetchFromNetwork: Boolean,
-    ): Any
+    ): Flow<*>
 
     fun getFavoriteStaff(
         userId: Int,
         page: Int,
         perPage: Int = 25,
         fetchFromNetwork: Boolean,
-    ): Any
+    ): Flow<*>
 
     fun getFavoriteStudios(
         userId: Int,
         page: Int,
         perPage: Int = 25,
         fetchFromNetwork: Boolean,
-    ): Any
+    ): Flow<*>
 
     fun getFollowers(
         userId: Int,
         page: Int,
         perPage: Int = 25,
         fetchFromNetwork: Boolean,
-    ): Any
+    ): Flow<*>
 
     fun getFollowing(
         userId: Int,
         page: Int,
         perPage: Int = 25,
         fetchFromNetwork: Boolean,
-    ): Any
+    ): Flow<*>
 
     fun searchMedia(
         mediaType: MediaType,
         query: String,
         page: Int,
         perPage: Int = 25,
-    ): Any
+    ): Flow<*>
 
-    fun getMediaDetails(mediaId: Int): Any
+    fun getMediaDetails(mediaId: Int): Flow<*>
 
     fun getMediaActivity(
         mediaId: Int,
         userId: Int? = null,
         page: Int,
         perPage: Int = 25,
-    ): Any
+    ): Flow<*>
 }
 
 abstract class BaseTrackerAdapter : TrackerAdapter {
     override val isLoggedIn: Flow<Boolean> = flowOf(false)
+
+    private fun <T> unsupported(): T {
+        val operation = Throwable().stackTrace
+            .firstOrNull { it.className == this::class.qualifiedName && it.methodName != "unsupported" }
+            ?.methodName ?: "unknown"
+        throw UnsupportedOperationException(
+            "Tracker operation '$operation' not supported by adapter ${
+                this::class.qualifiedName ?: this::class.toString()
+            }"
+        )
+    }
 
     override suspend fun onAuthRedirect(uri: Uri) = unsupported()
 
@@ -200,7 +212,7 @@ abstract class BaseTrackerAdapter : TrackerAdapter {
         fetchFromNetwork: Boolean,
         chunk: Int?,
         perChunk: Int?,
-    ) = unsupported<Any>()
+    ) = unsupported<Flow<*>>()
 
     override fun getAnimeList(
         userId: Int,
@@ -209,7 +221,7 @@ abstract class BaseTrackerAdapter : TrackerAdapter {
         fetchFromNetwork: Boolean,
         page: Int?,
         perPage: Int?,
-    ) = unsupported<Any>()
+    ) = unsupported<Flow<*>>()
 
     override fun getMangaList(
         userId: Int,
@@ -218,7 +230,7 @@ abstract class BaseTrackerAdapter : TrackerAdapter {
         fetchFromNetwork: Boolean,
         page: Int?,
         perPage: Int?,
-    ) = unsupported<Any>()
+    ) = unsupported<Flow<*>>()
 
     override fun updateEntry(
         oldEntry: BasicMediaListEntry?,
@@ -231,38 +243,38 @@ abstract class BaseTrackerAdapter : TrackerAdapter {
         startedAt: FuzzyDate?,
         completedAt: FuzzyDate?,
         repeat: Int?,
-        private: Boolean?,
+        isPrivate: Boolean?,
         hiddenFromStatusLists: Boolean?,
         notes: String?,
-    ) = unsupported<Any>()
+    ) = unsupported<Flow<*>>()
 
     override fun updateStatus(
         oldEntry: BasicMediaListEntry?,
         mediaId: Int,
         status: MediaListStatus,
-    ) = unsupported<Any>()
+    ) = unsupported<Flow<*>>()
 
     override fun updateProgress(
         oldEntry: BasicMediaListEntry?,
         mediaId: Int,
         progress: Int?,
         progressVolumes: Int?,
-    ) = unsupported<Any>()
+    ) = unsupported<Flow<*>>()
 
     override fun updateScore(
         oldEntry: BasicMediaListEntry?,
         mediaId: Int,
         score: Double?,
         advancedScores: Collection<Double>?,
-    ) = unsupported<Any>()
+    ) = unsupported<Flow<*>>()
 
-    override fun getMyProfile(fetchFromNetwork: Boolean) = unsupported<Any>()
+    override fun getMyProfile(fetchFromNetwork: Boolean) = unsupported<Flow<*>>()
 
     override fun getProfile(
         userId: Int?,
         username: String?,
         fetchFromNetwork: Boolean,
-    ) = unsupported<Any>()
+    ) = unsupported<Flow<*>>()
 
     override fun getActivityFeed(
         isFollowing: Boolean,
@@ -270,7 +282,7 @@ abstract class BaseTrackerAdapter : TrackerAdapter {
         fetchFromNetwork: Boolean,
         page: Int,
         perPage: Int,
-    ) = unsupported<Any>()
+    ) = unsupported<Flow<*>>()
 
     override fun getUserActivity(
         userId: Int,
@@ -278,14 +290,14 @@ abstract class BaseTrackerAdapter : TrackerAdapter {
         fetchFromNetwork: Boolean,
         page: Int,
         perPage: Int,
-    ) = unsupported<Any>()
+    ) = unsupported<Flow<*>>()
 
     override fun getFavoriteAnime(
         userId: Int,
         page: Int,
         perPage: Int,
         fetchFromNetwork: Boolean,
-    ) = unsupported<Any>()
+    ) = unsupported<Flow<*>>()
 
     override suspend fun toggleFavorite(
         animeId: Int?,
@@ -293,66 +305,63 @@ abstract class BaseTrackerAdapter : TrackerAdapter {
         characterId: Int?,
         staffId: Int?,
         studioId: Int?,
-    ) = unsupported<Any>()
+    ) = unsupported<DataResult<*>>()
 
     override fun getFavoriteManga(
         userId: Int,
         page: Int,
         perPage: Int,
         fetchFromNetwork: Boolean,
-    ) = unsupported<Any>()
+    ) = unsupported<Flow<*>>()
 
     override fun getFavoriteCharacters(
         userId: Int,
         page: Int,
         perPage: Int,
         fetchFromNetwork: Boolean,
-    ) = unsupported<Any>()
+    ) = unsupported<Flow<*>>()
 
     override fun getFavoriteStaff(
         userId: Int,
         page: Int,
         perPage: Int,
         fetchFromNetwork: Boolean,
-    ) = unsupported<Any>()
+    ) = unsupported<Flow<*>>()
 
     override fun getFavoriteStudios(
         userId: Int,
         page: Int,
         perPage: Int,
         fetchFromNetwork: Boolean,
-    ) = unsupported<Any>()
+    ) = unsupported<Flow<*>>()
 
     override fun getFollowers(
         userId: Int,
         page: Int,
         perPage: Int,
         fetchFromNetwork: Boolean,
-    ) = unsupported<Any>()
+    ) = unsupported<Flow<*>>()
 
     override fun getFollowing(
         userId: Int,
         page: Int,
         perPage: Int,
         fetchFromNetwork: Boolean,
-    ) = unsupported<Any>()
+    ) = unsupported<Flow<*>>()
 
     override fun searchMedia(
         mediaType: MediaType,
         query: String,
         page: Int,
         perPage: Int,
-    ) = unsupported<Any>()
+    ) = unsupported<Flow<*>>()
 
-    override fun getMediaDetails(mediaId: Int) = unsupported<Any>()
+    override fun getMediaDetails(mediaId: Int) = unsupported<Flow<*>>()
 
     override fun getMediaActivity(
         mediaId: Int,
         userId: Int?,
         page: Int,
         perPage: Int,
-    ) = unsupported<Any>()
+    ) = unsupported<Flow<*>>()
 }
-
-private fun unsupported(): Nothing =
-    throw UnsupportedOperationException("Tracker operation not supported by this adapter")

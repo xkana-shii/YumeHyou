@@ -104,7 +104,7 @@ class AniListTrackerAdapter(
         startedAt: FuzzyDate?,
         completedAt: FuzzyDate?,
         repeat: Int?,
-        private: Boolean?,
+        isPrivate: Boolean?,
         hiddenFromStatusLists: Boolean?,
         notes: String?,
     ) = mediaListRepository.updateEntry(
@@ -118,7 +118,7 @@ class AniListTrackerAdapter(
         startedAt = startedAt,
         completedAt = completedAt,
         repeat = repeat,
-        private = private,
+        private = isPrivate,
         hiddenFromStatusLists = hiddenFromStatusLists,
         notes = notes,
     )
@@ -127,20 +127,10 @@ class AniListTrackerAdapter(
         oldEntry: BasicMediaListEntry?,
         mediaId: Int,
         status: MediaListStatus,
-    ) = updateEntry(
+    ) = updateEntryWithOldEntryDefaults(
         oldEntry = oldEntry,
         mediaId = mediaId,
         status = status,
-        score = null,
-        advancedScores = null,
-        progress = null,
-        progressVolumes = null,
-        startedAt = oldEntry?.startedAt?.fuzzyDate,
-        completedAt = oldEntry?.completedAt?.fuzzyDate,
-        repeat = null,
-        private = null,
-        hiddenFromStatusLists = null,
-        notes = null,
     )
 
     override fun updateProgress(
@@ -148,20 +138,11 @@ class AniListTrackerAdapter(
         mediaId: Int,
         progress: Int?,
         progressVolumes: Int?,
-    ) = updateEntry(
+    ) = updateEntryWithOldEntryDefaults(
         oldEntry = oldEntry,
         mediaId = mediaId,
-        status = null,
-        score = null,
-        advancedScores = null,
         progress = progress,
         progressVolumes = progressVolumes,
-        startedAt = oldEntry?.startedAt?.fuzzyDate,
-        completedAt = oldEntry?.completedAt?.fuzzyDate,
-        repeat = null,
-        private = null,
-        hiddenFromStatusLists = null,
-        notes = null,
     )
 
     override fun updateScore(
@@ -169,18 +150,33 @@ class AniListTrackerAdapter(
         mediaId: Int,
         score: Double?,
         advancedScores: Collection<Double>?,
+    ) = updateEntryWithOldEntryDefaults(
+        oldEntry = oldEntry,
+        mediaId = mediaId,
+        score = score,
+        advancedScores = advancedScores,
+    )
+
+    private fun updateEntryWithOldEntryDefaults(
+        oldEntry: BasicMediaListEntry?,
+        mediaId: Int,
+        status: MediaListStatus? = null,
+        score: Double? = null,
+        advancedScores: Collection<Double>? = null,
+        progress: Int? = null,
+        progressVolumes: Int? = null,
     ) = updateEntry(
         oldEntry = oldEntry,
         mediaId = mediaId,
-        status = null,
+        status = status,
         score = score,
         advancedScores = advancedScores,
-        progress = null,
-        progressVolumes = null,
+        progress = progress,
+        progressVolumes = progressVolumes,
         startedAt = oldEntry?.startedAt?.fuzzyDate,
         completedAt = oldEntry?.completedAt?.fuzzyDate,
         repeat = null,
-        private = null,
+        isPrivate = null,
         hiddenFromStatusLists = null,
         notes = null,
     )
