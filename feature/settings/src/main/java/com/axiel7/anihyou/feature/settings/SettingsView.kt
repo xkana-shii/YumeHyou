@@ -66,14 +66,15 @@ private const val versionString = "${BuildConfig.VERSION_NAME} (${BuildConfig.VE
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun SettingsView(
-    navActionManager: NavActionManager
-) {
+fun SettingsView(navActionManager: NavActionManager) {
     val viewModel: SettingsViewModel = koinViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val notificationPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        rememberPermissionState(Manifest.permission.POST_NOTIFICATIONS)
-    } else null
+    val notificationPermission =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            rememberPermissionState(Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            null
+        }
 
     SettingsContent(
         uiState = uiState,
@@ -92,12 +93,14 @@ private fun SettingsContent(
     navActionManager: NavActionManager,
 ) {
     val context = LocalContext.current
-    val isDarkTheme = (uiState.theme == Theme.FOLLOW_SYSTEM && isSystemInDarkTheme())
-            || uiState.theme == Theme.DARK
+    val isDarkTheme =
+        (uiState.theme == Theme.FOLLOW_SYSTEM && isSystemInDarkTheme()) ||
+            uiState.theme == Theme.DARK
 
-    val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
-        rememberTopAppBarState()
-    )
+    val topAppBarScrollBehavior =
+        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
+            rememberTopAppBarState(),
+        )
 
     ErrorDialogHandler(uiState, onDismiss = { event?.onErrorDisplayed() })
 
@@ -115,17 +118,18 @@ private fun SettingsContent(
         actions = {
             if (uiState.isLoading) {
                 SmallCircularProgressIndicator(
-                    modifier = Modifier.padding(horizontal = 16.dp)
+                    modifier = Modifier.padding(horizontal = 16.dp),
                 )
             }
         },
-        scrollBehavior = topAppBarScrollBehavior
+        scrollBehavior = topAppBarScrollBehavior,
     ) { padding ->
         Column(
-            modifier = Modifier
-                .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
-                .verticalScroll(rememberScrollState())
-                .padding(padding)
+            modifier =
+                Modifier
+                    .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
+                    .verticalScroll(rememberScrollState())
+                    .padding(padding),
         ) {
             PreferencesTitle(text = stringResource(R.string.display))
 
@@ -134,14 +138,14 @@ private fun SettingsContent(
                 entriesValues = Theme.entriesLocalized,
                 preferenceValue = uiState.theme,
                 icon = R.drawable.palette_24,
-                onValueChange = { event?.setTheme(it) }
+                onValueChange = { event?.setTheme(it) },
             )
 
             if (isDarkTheme) {
                 SwitchPreference(
                     title = stringResource(R.string.black_theme_variant),
                     preferenceValue = uiState.useBlackColors,
-                    onValueChange = { event?.setUseBlackColors(it) }
+                    onValueChange = { event?.setUseBlackColors(it) },
                 )
             }
 
@@ -150,12 +154,12 @@ private fun SettingsContent(
                 entriesValues = AppColorMode.entriesLocalized,
                 preferenceValue = uiState.appColorMode,
                 icon = R.drawable.colors_24,
-                onValueChange = { event?.setAppColorMode(it) }
+                onValueChange = { event?.setAppColorMode(it) },
             )
             if (uiState.appColorMode == AppColorMode.CUSTOM) {
                 CustomColorPreference(
                     color = uiState.appColor,
-                    onColorChanged = { event?.setCustomAppColor(it) }
+                    onColorChanged = { event?.setCustomAppColor(it) },
                 )
             }
 
@@ -164,7 +168,7 @@ private fun SettingsContent(
                 values = PaletteStyle.entries.map { it.name },
                 preferenceValue = uiState.colorPaletteStyle,
                 icon = R.drawable.format_paint_24,
-                onValueChange = { event?.setColorPalette(it) }
+                onValueChange = { event?.setColorPalette(it) },
             )
 
             LanguagePreference()
@@ -178,7 +182,7 @@ private fun SettingsContent(
                     onValueChange = { value ->
                         event?.setTitleLanguage(value)
                         context.showToast(R.string.changes_will_take_effect_on_app_restart)
-                    }
+                    },
                 )
 
                 ListPreference(
@@ -189,7 +193,7 @@ private fun SettingsContent(
                     onValueChange = { value ->
                         event?.setStaffNameLanguage(value)
                         context.showToast(R.string.changes_will_take_effect_on_app_restart)
-                    }
+                    },
                 )
 
                 ListPreference(
@@ -197,7 +201,7 @@ private fun SettingsContent(
                     entriesValues = ScoreFormat.entriesLocalized,
                     preferenceValue = uiState.scoreFormat,
                     icon = R.drawable.star_24,
-                    onValueChange = { event?.setScoreFormat(it) }
+                    onValueChange = { event?.setScoreFormat(it) },
                 )
 
                 ListPreference(
@@ -205,7 +209,7 @@ private fun SettingsContent(
                     entriesValues = DefaultTab.entriesLocalized,
                     preferenceValue = uiState.defaultTab,
                     icon = R.drawable.home_24,
-                    onValueChange = { event?.setDefaultTab(it) }
+                    onValueChange = { event?.setDefaultTab(it) },
                 )
 
                 PreferencesTitle(text = stringResource(R.string.list))
@@ -215,7 +219,7 @@ private fun SettingsContent(
                     preferenceValue = uiState.useGeneralListStyle?.not(),
                     onValueChange = {
                         event?.setUseGeneralListStyle(it.not())
-                    }
+                    },
                 )
                 if (uiState.useGeneralListStyle == true) {
                     ListPreference(
@@ -223,13 +227,13 @@ private fun SettingsContent(
                         entriesValues = ListStyle.entriesLocalized,
                         preferenceValue = uiState.generalListStyle,
                         icon = R.drawable.format_list_bulleted_24,
-                        onValueChange = { event?.setGeneralListStyle(it) }
+                        onValueChange = { event?.setGeneralListStyle(it) },
                     )
                 } else {
                     PlainPreference(
                         title = stringResource(R.string.list_style),
                         icon = R.drawable.format_list_bulleted_24,
-                        onClick = navActionManager::toListStyleSettings
+                        onClick = navActionManager::toListStyleSettings,
                     )
                 }
 
@@ -239,13 +243,13 @@ private fun SettingsContent(
                         entriesValues = ItemsPerRow.entriesLocalized,
                         preferenceValue = uiState.gridItemsPerRow,
                         icon = R.drawable.grid_view_24,
-                        onValueChange = { event?.setGridItemsPerRow(it) }
+                        onValueChange = { event?.setGridItemsPerRow(it) },
                     )
                 }
                 PlainPreference(
                     title = stringResource(R.string.custom_lists),
                     icon = R.drawable.playlist_add_24,
-                    onClick = navActionManager::toCustomLists
+                    onClick = navActionManager::toCustomLists,
                 )
 
                 PreferencesTitle(text = stringResource(R.string.content))
@@ -254,13 +258,13 @@ private fun SettingsContent(
                     title = stringResource(R.string.display_adult_content),
                     preferenceValue = uiState.userSettings?.options?.displayAdultContent,
                     icon = R.drawable.no_adult_content_24,
-                    onValueChange = { event?.setDisplayAdultContent(it) }
+                    onValueChange = { event?.setDisplayAdultContent(it) },
                 )
                 SwitchPreference(
                     title = stringResource(R.string.airing_on_my_list),
                     preferenceValue = uiState.airingOnMyList,
                     subtitle = stringResource(R.string.airing_on_my_list_summary),
-                    onValueChange = { event?.setAiringOnMyList(it) }
+                    onValueChange = { event?.setAiringOnMyList(it) },
                 )
 
                 PreferencesTitle(text = stringResource(R.string.notifications))
@@ -275,22 +279,22 @@ private fun SettingsContent(
                             notificationPermission = notificationPermission,
                             createNotificationChannels = {
                                 context.createDefaultNotificationChannels()
-                            }
+                            },
                         )
-                    }
+                    },
                 )
                 if (uiState.isNotificationsEnabled == true) {
                     ListPreference(
                         title = stringResource(R.string.update_interval),
                         entriesValues = NotificationInterval.entriesLocalized,
                         preferenceValue = uiState.notificationCheckInterval,
-                        onValueChange = { event?.setNotificationCheckInterval(it) }
+                        onValueChange = { event?.setNotificationCheckInterval(it) },
                     )
                     SwitchPreference(
                         title = stringResource(R.string.airing_anime_notifications),
                         preferenceValue = uiState.userSettings?.options?.airingNotifications,
                         icon = R.drawable.podcasts_24,
-                        onValueChange = { event?.setAiringNotification(it) }
+                        onValueChange = { event?.setAiringNotification(it) },
                     )
                 }
 
@@ -301,7 +305,7 @@ private fun SettingsContent(
                     icon = R.drawable.manage_accounts_24,
                     onClick = {
                         context.openLink(ANILIST_ACCOUNT_SETTINGS_URL)
-                    }
+                    },
                 )
                 PlainPreference(
                     title = stringResource(R.string.logout),
@@ -310,7 +314,7 @@ private fun SettingsContent(
                         event?.logOut {
                             context.getActivity()?.recreate()
                         }
-                    }
+                    },
                 )
             }
 
@@ -321,7 +325,7 @@ private fun SettingsContent(
                 icon = R.drawable.github_24,
                 onClick = {
                     context.openActionView(GITHUB_REPO_URL)
-                }
+                },
             )
 
             PlainPreference(
@@ -329,16 +333,16 @@ private fun SettingsContent(
                 icon = R.drawable.discord_24,
                 onClick = {
                     context.openActionView(DISCORD_SERVER_URL)
-                }
+                },
             )
 
             PlainPreference(
                 title = stringResource(R.string.version),
                 subtitle = versionString,
-                icon = R.drawable.anihyou_24,
+                icon = R.drawable.anihyou_yh_24,
                 onClick = {
                     context.copyToClipBoard(versionString)
-                }
+                },
             )
 
             PlainPreference(
@@ -346,13 +350,13 @@ private fun SettingsContent(
                 icon = R.drawable.code_24,
                 onClick = {
                     context.openActionView(GITHUB_PROFILE_URL)
-                }
+                },
             )
 
             PlainPreference(
                 title = stringResource(R.string.translations),
                 icon = R.drawable.language_24,
-                onClick = navActionManager::toTranslations
+                onClick = navActionManager::toTranslations,
             )
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -361,11 +365,11 @@ private fun SettingsContent(
                     icon = R.drawable.open_in_new_24,
                     onClick = {
                         context.openByDefaultSettings()
-                    }
+                    },
                 )
             }
-        }//: Column
-    }//: Scaffold
+        } // : Column
+    } // : Scaffold
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -378,7 +382,7 @@ private fun SettingsViewPreview() {
                 uiState = SettingsUiState(isLoggedIn = true),
                 event = null,
                 notificationPermission = null,
-                navActionManager = NavActionManager.rememberNavActionManager()
+                navActionManager = NavActionManager.rememberNavActionManager(),
             )
         }
     }
