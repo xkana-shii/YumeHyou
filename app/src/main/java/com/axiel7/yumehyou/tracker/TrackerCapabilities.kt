@@ -106,6 +106,23 @@ val anilistTrackerCapabilities = TrackerCapabilities(
     ),
 )
 
+val malTrackerCapabilities = TrackerCapabilities(
+    trackerType = TrackerType.MY_ANIME_LIST,
+    supported = setOf(
+        TrackerCapability.ANIME_TRACKING,
+        TrackerCapability.MANGA_TRACKING,
+        TrackerCapability.NOTES,
+        TrackerCapability.SCORE_UPDATES,
+        TrackerCapability.PROGRESS_UPDATES,
+        TrackerCapability.STATUS_UPDATES,
+        TrackerCapability.REWATCH_REREAD,
+        TrackerCapability.FAVORITES,
+        TrackerCapability.FOLLOWERS_FOLLOWING,
+        TrackerCapability.PROFILE_DATA,
+        TrackerCapability.EXTERNAL_LINKS,
+    ),
+)
+
 private data class StaticTrackerAdapter(
     override val trackerType: TrackerType,
     override val capabilities: TrackerCapabilities,
@@ -123,21 +140,6 @@ private fun staticTrackerAdapter(
 )
 
 val defaultTrackerAdapters: List<TrackerAdapter> = listOf(
-    staticTrackerAdapter(
-        trackerType = TrackerType.MY_ANIME_LIST,
-        TrackerCapability.ANIME_TRACKING,
-        TrackerCapability.MANGA_TRACKING,
-        TrackerCapability.NOTES,
-        TrackerCapability.CUSTOM_TAGS_LABELS,
-        TrackerCapability.SCORE_UPDATES,
-        TrackerCapability.PROGRESS_UPDATES,
-        TrackerCapability.STATUS_UPDATES,
-        TrackerCapability.REWATCH_REREAD,
-        TrackerCapability.FAVORITES,
-        TrackerCapability.FOLLOWERS_FOLLOWING,
-        TrackerCapability.PROFILE_DATA,
-        TrackerCapability.EXTERNAL_LINKS,
-    ),
     staticTrackerAdapter(
         trackerType = TrackerType.MANGA_UPDATES,
         TrackerCapability.MANGA_TRACKING,

@@ -9,6 +9,11 @@ import com.axiel7.anihyou.core.domain.repository.MediaRepository
 import com.axiel7.anihyou.core.domain.repository.SearchRepository
 import com.axiel7.anihyou.core.domain.repository.UserRepository
 import com.axiel7.yumehyou.core.model.TrackerType
+import com.axiel7.yumehyou.tracker.mal.JikanApiClient
+import com.axiel7.yumehyou.tracker.mal.MalApiClient
+import com.axiel7.yumehyou.tracker.mal.MalAuthService
+import com.axiel7.yumehyou.tracker.mal.MalMetadataProvider
+import com.axiel7.yumehyou.tracker.mal.MalSessionStore
 import org.koin.dsl.module
 
 interface TrackerManager {
@@ -53,6 +58,9 @@ class AniListTrackerGateway(
     activityRepository: ActivityRepository,
     favoriteRepository: FavoriteRepository,
     searchRepository: SearchRepository,
+    malAuthService: MalAuthService,
+    malApiClient: MalApiClient,
+    malMetadataProvider: MalMetadataProvider,
     adapters: List<TrackerAdapter> = listOf(
         AniListTrackerAdapter(
             loginRepository = loginRepository,
@@ -63,12 +71,23 @@ class AniListTrackerGateway(
             activityRepository = activityRepository,
             favoriteRepository = favoriteRepository,
             searchRepository = searchRepository,
-        )
+        ),
+        MalTrackerAdapter(
+            malAuthService = malAuthService,
+            malApiClient = malApiClient,
+            malMetadataProvider = malMetadataProvider,
+        ),
     ) + defaultTrackerAdapters,
     override val trackerManager: TrackerManager = DefaultTrackerManager(adapters),
 ) : TrackerGateway
 
 val trackerModule = module {
+    single { MalSessionStore(dataStore = get()) }
+    single { MalAuthService(sessionStore = get(), client = get()) }
+    single { MalApiClient(client = get(), authService = get()) }
+    single { JikanApiClient(client = get()) }
+    single { MalMetadataProvider(malApiClient = get(), jikanApiClient = get()) }
+
     single<TrackerGateway> {
         AniListTrackerGateway(
             mediaListRepository = get(),
@@ -79,6 +98,9 @@ val trackerModule = module {
             activityRepository = get(),
             favoriteRepository = get(),
             searchRepository = get(),
+            malAuthService = get(),
+            malApiClient = get(),
+            malMetadataProvider = get(),
         )
     }
 }
