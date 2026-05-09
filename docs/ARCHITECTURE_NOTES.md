@@ -32,6 +32,12 @@ This document summarizes the current architecture of `xkana-shii/YumeHyou` and m
 - `TrackerAdapter` carries `trackerType` and declared capabilities; `TrackerGateway` resolves adapters by tracker and provides capability queries (`TrackerGateway.kt:7-30`).
 - Business logic should query `TrackerGateway.supports(trackerType, capability)` or adapter capabilities instead of branching on tracker identity.
 
+### Phase 6: AniList wrapped as tracker adapter #1
+
+- `TrackerAdapter` is now a reusable tracker operation contract (auth state/login/logout, library fetch, entry updates, profile/activity/favorites/social, search, media details/activity) with `BaseTrackerAdapter` unsupported-operation defaults (`/app/src/main/java/com/axiel7/yumehyou/tracker/TrackerAdapter.kt`).
+- `AniListTrackerAdapter` is the first concrete adapter implementing that contract and delegates calls directly to existing AniHyou repositories (`LoginRepository`, `MediaListRepository`, `MediaRepository`, `UserRepository`, `ActivityRepository`, `FavoriteRepository`, `SearchRepository`) instead of reimplementing AniList logic (`/app/src/main/java/com/axiel7/yumehyou/tracker/AniListTrackerAdapter.kt`).
+- `TrackerManager` was introduced between `TrackerGateway` and adapters (`UI/business -> TrackerGateway -> TrackerManager -> TrackerAdapter`), and `AniListTrackerGateway` now initializes a manager with AniList + capability-only placeholder adapters for future trackers (`/app/src/main/java/com/axiel7/yumehyou/tracker/TrackerGateway.kt`).
+
 ## 1) High-level module layout
 
 - `app/`: app shell (application startup, DI wiring, main activity, top-level navigation) (`/home/runner/work/YumeHyou/YumeHyou/app/src/main/java/com/axiel7/anihyou/App.kt:28`, `/home/runner/work/YumeHyou/YumeHyou/app/src/main/java/com/axiel7/anihyou/ui/screens/main/MainActivity.kt:60`)

@@ -11,8 +11,7 @@ import com.axiel7.anihyou.core.domain.repository.UserRepository
 import com.axiel7.yumehyou.core.model.TrackerType
 import org.koin.dsl.module
 
-interface TrackerGateway {
-    val mediaListRepository: MediaListRepository
+interface TrackerManager {
     val adapters: List<TrackerAdapter>
 
     fun getAdapter(trackerType: TrackerType) =
@@ -27,6 +26,24 @@ interface TrackerGateway {
     ) = getCapabilities(trackerType)?.supports(capability) ?: false
 }
 
+data class DefaultTrackerManager(
+    override val adapters: List<TrackerAdapter>,
+) : TrackerManager
+
+interface TrackerGateway {
+    val mediaListRepository: MediaListRepository
+    val trackerManager: TrackerManager
+    val adapters: List<TrackerAdapter>
+        get() = trackerManager.adapters
+
+    fun getAdapter(trackerType: TrackerType) = trackerManager.getAdapter(trackerType)
+
+    fun getCapabilities(trackerType: TrackerType) = trackerManager.getCapabilities(trackerType)
+
+    fun supports(trackerType: TrackerType, capability: TrackerCapability) =
+        trackerManager.supports(trackerType, capability)
+}
+
 class AniListTrackerGateway(
     override val mediaListRepository: MediaListRepository,
     loginRepository: LoginRepository,
@@ -36,7 +53,7 @@ class AniListTrackerGateway(
     activityRepository: ActivityRepository,
     favoriteRepository: FavoriteRepository,
     searchRepository: SearchRepository,
-    override val adapters: List<TrackerAdapter> = listOf(
+    adapters: List<TrackerAdapter> = listOf(
         AniListTrackerAdapter(
             loginRepository = loginRepository,
             defaultPreferencesRepository = defaultPreferencesRepository,
@@ -48,6 +65,7 @@ class AniListTrackerGateway(
             searchRepository = searchRepository,
         )
     ) + defaultTrackerAdapters,
+    override val trackerManager: TrackerManager = DefaultTrackerManager(adapters),
 ) : TrackerGateway
 
 val trackerModule = module {
