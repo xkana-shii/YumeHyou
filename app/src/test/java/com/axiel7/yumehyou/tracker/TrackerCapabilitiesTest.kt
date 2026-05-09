@@ -51,9 +51,15 @@ class TrackerCapabilitiesTest {
     fun malCapabilitiesMatchImplementedPhase7Surface() {
         assertTrue(malTrackerCapabilities.supports(TrackerCapability.ANIME_TRACKING))
         assertTrue(malTrackerCapabilities.supports(TrackerCapability.MANGA_TRACKING))
+        assertTrue(malTrackerCapabilities.supports(TrackerCapability.NOTES))
         assertTrue(malTrackerCapabilities.supports(TrackerCapability.STATUS_UPDATES))
         assertTrue(malTrackerCapabilities.supports(TrackerCapability.PROGRESS_UPDATES))
         assertTrue(malTrackerCapabilities.supports(TrackerCapability.SCORE_UPDATES))
+        assertTrue(malTrackerCapabilities.supports(TrackerCapability.REWATCH_REREAD))
+        assertTrue(malTrackerCapabilities.supports(TrackerCapability.FAVORITES))
+        assertTrue(malTrackerCapabilities.supports(TrackerCapability.FOLLOWERS_FOLLOWING))
+        assertTrue(malTrackerCapabilities.supports(TrackerCapability.PROFILE_DATA))
+        assertTrue(malTrackerCapabilities.supports(TrackerCapability.EXTERNAL_LINKS))
         assertFalse(malTrackerCapabilities.supports(TrackerCapability.ACTIVITY_DATA))
     }
 
