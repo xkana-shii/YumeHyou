@@ -55,8 +55,20 @@ data class PartialDate(
         require(month == null || month in 1..12) {
             "month must be between 1 and 12"
         }
-        require(day == null || day in 1..31) {
-            "day must be between 1 and 31"
+        require(day == null || day in 1..maxDayOfMonth(month, year)) {
+            "day must be valid for the provided month and year"
         }
     }
+
+    private fun maxDayOfMonth(
+        month: Int?,
+        year: Int?,
+    ) = when (month) {
+        2 -> if (year != null && isLeapYear(year)) 29 else 28
+        4, 6, 9, 11 -> 30
+        else -> 31
+    }
+
+    private fun isLeapYear(year: Int) =
+        year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)
 }

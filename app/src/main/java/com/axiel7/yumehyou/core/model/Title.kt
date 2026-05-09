@@ -10,11 +10,13 @@ data class Title(
     val all: List<String>
         get() = buildList {
             add(preferred)
-            listOfNotNull(romaji, english, native)
-                .filterNot { it == preferred }
-                .forEach(::add)
-            alternatives
-                .filterNot { it == preferred || contains(it) }
-                .forEach(::add)
+            addDistinct(listOfNotNull(romaji, english, native))
+            addDistinct(alternatives)
         }
+
+    private fun MutableList<String>.addDistinct(values: List<String>) {
+        values
+            .filterNot { it == preferred || contains(it) }
+            .forEach(::add)
+    }
 }

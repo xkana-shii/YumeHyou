@@ -44,4 +44,26 @@ class UnifiedDomainModelsTest {
             Score(value = 11.0, maxValue = 10.0)
         }
     }
+
+    @Test
+    fun titleCollectsDistinctVariants() {
+        val title = Title(
+            preferred = "Monster",
+            english = "Monster",
+            native = "MONSTER",
+            alternatives = listOf("Monster", "Naoki Urasawa's Monster"),
+        )
+
+        assertEquals(
+            listOf("Monster", "MONSTER", "Naoki Urasawa's Monster"),
+            title.all,
+        )
+    }
+
+    @Test
+    fun partialDateRejectsInvalidMonthDayCombination() {
+        assertThrows(IllegalArgumentException::class.java) {
+            PartialDate(year = 2024, month = 2, day = 30)
+        }
+    }
 }
