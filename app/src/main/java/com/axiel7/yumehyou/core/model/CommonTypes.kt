@@ -1,5 +1,7 @@
 package com.axiel7.yumehyou.core.model
 
+import java.time.Year
+
 enum class MetadataSource {
     ANILIST,
     MANGA_BAKA,
@@ -73,5 +75,5 @@ data class PartialDate(
     }
 
     private fun isLeapYear(year: Int) =
-        year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)
+        Year.isLeap(year.toLong())
 }

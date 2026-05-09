@@ -55,7 +55,7 @@ class UnifiedDomainModelsTest {
         )
 
         assertEquals(
-            listOf("Monster", "MONSTER", "Naoki Urasawa's Monster"),
+            listOf("Monster", "Naoki Urasawa's Monster"),
             title.all,
         )
     }

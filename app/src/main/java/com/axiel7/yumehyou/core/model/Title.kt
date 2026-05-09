@@ -20,7 +20,7 @@ data class Title(
         value: String,
         seen: MutableSet<String>,
     ) {
-        if (seen.add(value)) {
+        if (seen.add(value.lowercase())) {
             add(value)
         }
     }
