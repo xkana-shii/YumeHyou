@@ -17,7 +17,7 @@ interface TrackerGateway {
     fun supports(
         trackerType: TrackerType,
         capability: TrackerCapability,
-    ) = getCapabilities(trackerType)?.supports(capability) == true
+    ) = getCapabilities(trackerType)?.supports(capability) ?: false
 }
 
 class AniListTrackerGateway(

@@ -11,10 +11,12 @@ import org.junit.Test
 class TrackerCapabilitiesTest {
     @Test
     fun capabilityFactoryDeduplicatesEntries() {
-        val capabilities = TrackerCapabilities.of(
+        val capabilities = TrackerCapabilities(
             trackerType = TrackerType.ANILIST,
-            TrackerCapability.ANIME_TRACKING,
-            TrackerCapability.ANIME_TRACKING,
+            supported = setOf(
+                TrackerCapability.ANIME_TRACKING,
+                TrackerCapability.ANIME_TRACKING,
+            ),
         )
 
         assertEquals(setOf(TrackerCapability.ANIME_TRACKING), capabilities.supported)

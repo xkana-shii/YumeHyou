@@ -82,15 +82,6 @@ data class TrackerCapabilities(
     val titleLanguageSettings: Boolean
         get() = supports(TrackerCapability.TITLE_LANGUAGE_SETTINGS)
 
-    companion object {
-        fun of(
-            trackerType: TrackerType,
-            vararg supported: TrackerCapability,
-        ) = TrackerCapabilities(
-            trackerType = trackerType,
-            supported = supported.toSet(),
-        )
-    }
 }
 
 interface TrackerAdapter {
@@ -103,75 +94,74 @@ private data class StaticTrackerAdapter(
     override val capabilities: TrackerCapabilities,
 ) : TrackerAdapter
 
+private fun staticTrackerAdapter(
+    trackerType: TrackerType,
+    vararg supported: TrackerCapability,
+) = StaticTrackerAdapter(
+    trackerType = trackerType,
+    capabilities = TrackerCapabilities(
+        trackerType = trackerType,
+        supported = supported.toSet(),
+    ),
+)
+
 val defaultTrackerAdapters: List<TrackerAdapter> = listOf(
-    StaticTrackerAdapter(
+    staticTrackerAdapter(
         trackerType = TrackerType.ANILIST,
-        capabilities = TrackerCapabilities.of(
-            trackerType = TrackerType.ANILIST,
-            TrackerCapability.ANIME_TRACKING,
-            TrackerCapability.MANGA_TRACKING,
-            TrackerCapability.NOTES,
-            TrackerCapability.CUSTOM_TAGS_LABELS,
-            TrackerCapability.SCORE_UPDATES,
-            TrackerCapability.PROGRESS_UPDATES,
-            TrackerCapability.STATUS_UPDATES,
-            TrackerCapability.REWATCH_REREAD,
-            TrackerCapability.FAVORITES,
-            TrackerCapability.FOLLOWERS_FOLLOWING,
-            TrackerCapability.PROFILE_DATA,
-            TrackerCapability.ACTIVITY_DATA,
-            TrackerCapability.EXPORT,
-            TrackerCapability.ADULT_CONTENT_PREFERENCES,
-            TrackerCapability.EXTERNAL_LINKS,
-            TrackerCapability.TITLE_LANGUAGE_SETTINGS,
-        ),
+        TrackerCapability.ANIME_TRACKING,
+        TrackerCapability.MANGA_TRACKING,
+        TrackerCapability.NOTES,
+        TrackerCapability.CUSTOM_TAGS_LABELS,
+        TrackerCapability.SCORE_UPDATES,
+        TrackerCapability.PROGRESS_UPDATES,
+        TrackerCapability.STATUS_UPDATES,
+        TrackerCapability.REWATCH_REREAD,
+        TrackerCapability.FAVORITES,
+        TrackerCapability.FOLLOWERS_FOLLOWING,
+        TrackerCapability.PROFILE_DATA,
+        TrackerCapability.ACTIVITY_DATA,
+        TrackerCapability.EXPORT,
+        TrackerCapability.ADULT_CONTENT_PREFERENCES,
+        TrackerCapability.EXTERNAL_LINKS,
+        TrackerCapability.TITLE_LANGUAGE_SETTINGS,
     ),
-    StaticTrackerAdapter(
+    staticTrackerAdapter(
         trackerType = TrackerType.MY_ANIME_LIST,
-        capabilities = TrackerCapabilities.of(
-            trackerType = TrackerType.MY_ANIME_LIST,
-            TrackerCapability.ANIME_TRACKING,
-            TrackerCapability.MANGA_TRACKING,
-            TrackerCapability.NOTES,
-            TrackerCapability.CUSTOM_TAGS_LABELS,
-            TrackerCapability.SCORE_UPDATES,
-            TrackerCapability.PROGRESS_UPDATES,
-            TrackerCapability.STATUS_UPDATES,
-            TrackerCapability.REWATCH_REREAD,
-            TrackerCapability.FAVORITES,
-            TrackerCapability.FOLLOWERS_FOLLOWING,
-            TrackerCapability.PROFILE_DATA,
-            TrackerCapability.EXTERNAL_LINKS,
-        ),
+        TrackerCapability.ANIME_TRACKING,
+        TrackerCapability.MANGA_TRACKING,
+        TrackerCapability.NOTES,
+        TrackerCapability.CUSTOM_TAGS_LABELS,
+        TrackerCapability.SCORE_UPDATES,
+        TrackerCapability.PROGRESS_UPDATES,
+        TrackerCapability.STATUS_UPDATES,
+        TrackerCapability.REWATCH_REREAD,
+        TrackerCapability.FAVORITES,
+        TrackerCapability.FOLLOWERS_FOLLOWING,
+        TrackerCapability.PROFILE_DATA,
+        TrackerCapability.EXTERNAL_LINKS,
     ),
-    StaticTrackerAdapter(
+    staticTrackerAdapter(
         trackerType = TrackerType.MANGA_UPDATES,
-        capabilities = TrackerCapabilities.of(
-            trackerType = TrackerType.MANGA_UPDATES,
-            TrackerCapability.MANGA_TRACKING,
-            TrackerCapability.NOTES,
-            TrackerCapability.CUSTOM_TAGS_LABELS,
-            TrackerCapability.SCORE_UPDATES,
-            TrackerCapability.PROGRESS_UPDATES,
-            TrackerCapability.STATUS_UPDATES,
-            TrackerCapability.REWATCH_REREAD,
-            TrackerCapability.FAVORITES,
-            TrackerCapability.FOLLOWERS_FOLLOWING,
-            TrackerCapability.PROFILE_DATA,
-            TrackerCapability.EXTERNAL_LINKS,
-        ),
+        TrackerCapability.MANGA_TRACKING,
+        TrackerCapability.NOTES,
+        TrackerCapability.CUSTOM_TAGS_LABELS,
+        TrackerCapability.SCORE_UPDATES,
+        TrackerCapability.PROGRESS_UPDATES,
+        TrackerCapability.STATUS_UPDATES,
+        TrackerCapability.REWATCH_REREAD,
+        TrackerCapability.FAVORITES,
+        TrackerCapability.FOLLOWERS_FOLLOWING,
+        TrackerCapability.PROFILE_DATA,
+        TrackerCapability.EXTERNAL_LINKS,
     ),
-    StaticTrackerAdapter(
+    staticTrackerAdapter(
         trackerType = TrackerType.MANGA_BAKA,
-        capabilities = TrackerCapabilities.of(
-            trackerType = TrackerType.MANGA_BAKA,
-            TrackerCapability.MANGA_TRACKING,
-            TrackerCapability.NOTES,
-            TrackerCapability.SCORE_UPDATES,
-            TrackerCapability.PROGRESS_UPDATES,
-            TrackerCapability.STATUS_UPDATES,
-            TrackerCapability.EXTERNAL_LINKS,
-            TrackerCapability.TITLE_LANGUAGE_SETTINGS,
-        ),
+        TrackerCapability.MANGA_TRACKING,
+        TrackerCapability.NOTES,
+        TrackerCapability.SCORE_UPDATES,
+        TrackerCapability.PROGRESS_UPDATES,
+        TrackerCapability.STATUS_UPDATES,
+        TrackerCapability.EXTERNAL_LINKS,
+        TrackerCapability.TITLE_LANGUAGE_SETTINGS,
     ),
 )
