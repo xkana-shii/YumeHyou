@@ -89,25 +89,9 @@ interface TrackerAdapter {
     val capabilities: TrackerCapabilities
 }
 
-private data class StaticTrackerAdapter(
-    override val trackerType: TrackerType,
-    override val capabilities: TrackerCapabilities,
-) : TrackerAdapter
-
-private fun staticTrackerAdapter(
-    trackerType: TrackerType,
-    vararg supported: TrackerCapability,
-) = StaticTrackerAdapter(
-    trackerType = trackerType,
-    capabilities = TrackerCapabilities(
-        trackerType = trackerType,
-        supported = supported.toSet(),
-    ),
-)
-
-val defaultTrackerAdapters: List<TrackerAdapter> = listOf(
-    staticTrackerAdapter(
-        trackerType = TrackerType.ANILIST,
+val anilistTrackerCapabilities = TrackerCapabilities(
+    trackerType = TrackerType.ANILIST,
+    supported = setOf(
         TrackerCapability.ANIME_TRACKING,
         TrackerCapability.MANGA_TRACKING,
         TrackerCapability.NOTES,
@@ -125,6 +109,25 @@ val defaultTrackerAdapters: List<TrackerAdapter> = listOf(
         TrackerCapability.EXTERNAL_LINKS,
         TrackerCapability.TITLE_LANGUAGE_SETTINGS,
     ),
+)
+
+private data class StaticTrackerAdapter(
+    override val trackerType: TrackerType,
+    override val capabilities: TrackerCapabilities,
+) : TrackerAdapter
+
+private fun staticTrackerAdapter(
+    trackerType: TrackerType,
+    vararg supported: TrackerCapability,
+) = StaticTrackerAdapter(
+    trackerType = trackerType,
+    capabilities = TrackerCapabilities(
+        trackerType = trackerType,
+        supported = supported.toSet(),
+    ),
+)
+
+val defaultTrackerAdapters: List<TrackerAdapter> = listOf(
     staticTrackerAdapter(
         trackerType = TrackerType.MY_ANIME_LIST,
         TrackerCapability.ANIME_TRACKING,

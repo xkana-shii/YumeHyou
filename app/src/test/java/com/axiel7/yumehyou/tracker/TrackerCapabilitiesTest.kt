@@ -23,11 +23,9 @@ class TrackerCapabilitiesTest {
     }
 
     @Test
-    fun anilistAdapterSupportsAllDefinedCapabilities() {
-        val adapter = defaultTrackerAdapters.first { it.trackerType == TrackerType.ANILIST }
-
+    fun anilistCapabilitiesSupportAllDefinedCapabilities() {
         assertTrue(
-            adapter.capabilities.supportsAll(
+            anilistTrackerCapabilities.supportsAll(
                 TrackerCapability.ANIME_TRACKING,
                 TrackerCapability.MANGA_TRACKING,
                 TrackerCapability.NOTES,

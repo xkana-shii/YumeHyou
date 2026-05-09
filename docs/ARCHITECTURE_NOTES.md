@@ -2,6 +2,36 @@
 
 This document summarizes the current architecture of `xkana-shii/YumeHyou` and maps where key concerns live.
 
+## 0) YumeHyou additive architecture status (Phases 3-5)
+
+### Phase 3: additive YumeHyou package layer
+
+- New additive packages exist under `/app/src/main/java/com/axiel7/yumehyou/`: `core`, `metadata`, `tracker`, `sync`, `search`, `activity`, `export`, `settings`.
+- `App` wires YumeHyou modules (`yumehyouCoreModule`, `metadataModule`, `trackerModule`, `syncModule`, `searchModule`, `activityModule`, `exportModule`, `settingsModule`) in addition to existing AniHyou modules (`/app/src/main/java/com/axiel7/anihyou/App.kt:44-59`).
+- Boundary: upstream AniHyou repositories/API/viewmodels remain in `com.axiel7.anihyou.*`; YumeHyou layer composes those via gateway/provider wrappers rather than moving upstream files (`/app/src/main/java/com/axiel7/yumehyou/*`).
+- Merge-compatibility constraint currently implemented as additive composition: no upstream package reorganization and no upstream class renames were introduced for this layer.
+
+### Phase 4: unified domain model architecture
+
+- Unified models are implemented in `/app/src/main/java/com/axiel7/yumehyou/core/model/`.
+- `UnifiedMedia` is the cross-source metadata aggregate (titles, status, staff/characters/relations/tags/links, and tracker mappings) (`UnifiedMedia.kt:3-29`).
+- `UnifiedLibraryEntry` is the unified list/tracking state record (status, score, progress, repeat count, notes/privacy, tracker mappings) (`UnifiedMedia.kt:31-44`).
+- `TrackerMapping` links unified entities to tracker-specific IDs/entry IDs and optional canonical URL (`TrackerMapping.kt:3-9`).
+- `TrackerType` identifies supported trackers (AniList, MyAnimeList, MangaUpdates, MangaBaka) (`CommonTypes.kt:10-15`).
+- `MediaType` and `MediaStatus` define media classification and lifecycle status (`CommonTypes.kt:17-31`); `MediaType` sets default canonical source (`ANIME -> ANILIST`, `MANGA -> MANGA_BAKA`).
+- Related model roles:
+  - `Title` stores preferred/variant names (`Title.kt:5-29`)
+  - `Score` stores normalized scoring metadata (`Score.kt:3-30`)
+  - `Staff`, `Character`, `Relation`, `Tag`, `ExternalLink`, `ContentRating`, `PartialDate` enrich `UnifiedMedia`/`UnifiedLibraryEntry` (`PeopleAndLinks.kt`, `CommonTypes.kt`).
+
+### Phase 5: tracker capability system
+
+- Capability matrix is implemented in `/app/src/main/java/com/axiel7/yumehyou/tracker/TrackerCapabilities.kt`.
+- `TrackerCapability` enumerates feature-level support flags (tracking, notes/tags, score/progress/status updates, rewatch/reread, favorites/social/profile/activity/export/preferences/links/title language).
+- `TrackerCapabilities` wraps `trackerType + supported:Set<TrackerCapability>` and exposes `supports`, `supportsAll`, `supportsAny`, plus per-capability booleans for direct business-logic checks.
+- `TrackerAdapter` carries `trackerType` and declared capabilities; `TrackerGateway` resolves adapters by tracker and provides capability queries (`TrackerGateway.kt:7-30`).
+- Business logic should query `TrackerGateway.supports(trackerType, capability)` or adapter capabilities instead of branching on tracker identity.
+
 ## 1) High-level module layout
 
 - `app/`: app shell (application startup, DI wiring, main activity, top-level navigation) (`/home/runner/work/YumeHyou/YumeHyou/app/src/main/java/com/axiel7/anihyou/App.kt:28`, `/home/runner/work/YumeHyou/YumeHyou/app/src/main/java/com/axiel7/anihyou/ui/screens/main/MainActivity.kt:60`)
@@ -213,4 +243,3 @@ Typical preferences flow:
   - `repositoryModule`
   - `viewModelModule`
   - `workerModule` (`App.kt:37-43`)
-
