@@ -1,8 +1,8 @@
 package com.axiel7.yumehyou.tracker.mal
 
 import android.net.Uri
-import com.axiel7.anihyou.core.base.MAL_CLIENT_ID
 import androidx.core.net.toUri
+import com.axiel7.anihyou.core.base.MAL_CLIENT_ID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
