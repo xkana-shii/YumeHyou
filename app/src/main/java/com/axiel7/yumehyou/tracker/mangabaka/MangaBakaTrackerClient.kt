@@ -37,10 +37,22 @@ class MangaBakaTrackerClient(
     suspend fun createLibraryEntry(
         seriesId: String,
         state: String,
+        progressChapter: Int? = null,
+        progressVolume: Int? = null,
+        rating: Int? = null,
+        note: String? = null,
+        rereads: Int? = null,
     ): DataResult<String> = authenticatedRequest(
         method = "POST",
         path = "my/library/$seriesId",
-        jsonBody = JSONObject().put("state", state),
+        jsonBody = JSONObject().apply {
+            put("state", state)
+            progressChapter?.let { put("progress_chapter", it) }
+            progressVolume?.let { put("progress_volume", it) }
+            rating?.let { put("rating", it) }
+            note?.takeIf { it.isNotBlank() }?.let { put("note", it) }
+            rereads?.let { put("number_of_rereads", it) }
+        },
     )
 
     suspend fun updateLibraryEntry(

@@ -97,9 +97,7 @@ class MangaBakaTrackerAdapter(
             rereads = repeat,
         )
         if (updateResult is DataResult.Error && oldEntry == null && normalizedStatus != null) {
-            val created = trackerClient.createLibraryEntry(seriesId = seriesId, state = normalizedStatus)
-            if (created is DataResult.Error) return@resultFlow created
-            return@resultFlow trackerClient.updateLibraryEntry(
+            return@resultFlow trackerClient.createLibraryEntry(
                 seriesId = seriesId,
                 state = normalizedStatus,
                 progressChapter = progress,
