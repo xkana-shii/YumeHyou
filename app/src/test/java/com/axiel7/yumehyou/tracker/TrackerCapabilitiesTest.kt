@@ -23,7 +23,7 @@ class TrackerCapabilitiesTest {
     }
 
     @Test
-    fun anilistAdapterSupportsAllPhaseFiveCapabilities() {
+    fun anilistAdapterSupportsAllDefinedCapabilities() {
         val adapter = defaultTrackerAdapters.first { it.trackerType == TrackerType.ANILIST }
 
         assertTrue(
