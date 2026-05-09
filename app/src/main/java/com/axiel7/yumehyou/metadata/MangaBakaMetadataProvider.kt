@@ -353,8 +353,8 @@ internal class MangaBakaMetadataMapper(
                     imageUrl = imageUrl?.takeIf { it.isNotBlank() },
                     price = firstPrice?.let { priceObject ->
                         val value = priceObject.opt("value")?.toString().orEmpty()
-                        val isoCode = priceObject.optString("iso_code")
-                        listOf(value, isoCode.uppercase().takeIf { currencyCode -> currencyCode.isNotBlank() })
+                        val currencyCode = priceObject.optString("iso_code")
+                        listOf(value, currencyCode.uppercase().takeIf { it.isNotBlank() })
                             .filterNotNull()
                             .joinToString(" ")
                             .takeIf { priceLabel -> priceLabel.isNotBlank() }
