@@ -59,11 +59,19 @@ class TrackerCapabilitiesTest {
         val gateway = object : TrackerGateway {
             override val mediaListRepository: MediaListRepository
                 get() = error("Not needed for capability lookups")
-            override val adapters = defaultTrackerAdapters
+            override val trackerManager = DefaultTrackerManager(defaultTrackerAdapters)
         }
 
         assertTrue(gateway.supports(TrackerType.MY_ANIME_LIST, TrackerCapability.SCORE_UPDATES))
         assertFalse(gateway.supports(TrackerType.MANGA_BAKA, TrackerCapability.FAVORITES))
         assertNotNull(gateway.getCapabilities(TrackerType.ANILIST))
+    }
+
+    @Test
+    fun trackerManagerResolvesAdaptersByTrackerType() {
+        val manager = DefaultTrackerManager(defaultTrackerAdapters)
+
+        assertNotNull(manager.getAdapter(TrackerType.MY_ANIME_LIST))
+        assertNotNull(manager.getAdapter(TrackerType.MANGA_UPDATES))
     }
 }

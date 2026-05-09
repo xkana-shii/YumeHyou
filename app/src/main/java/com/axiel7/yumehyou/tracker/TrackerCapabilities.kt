@@ -84,11 +84,6 @@ data class TrackerCapabilities(
 
 }
 
-interface TrackerAdapter {
-    val trackerType: TrackerType
-    val capabilities: TrackerCapabilities
-}
-
 val anilistTrackerCapabilities = TrackerCapabilities(
     trackerType = TrackerType.ANILIST,
     supported = setOf(
@@ -114,7 +109,7 @@ val anilistTrackerCapabilities = TrackerCapabilities(
 private data class StaticTrackerAdapter(
     override val trackerType: TrackerType,
     override val capabilities: TrackerCapabilities,
-) : TrackerAdapter
+) : BaseTrackerAdapter()
 
 private fun staticTrackerAdapter(
     trackerType: TrackerType,

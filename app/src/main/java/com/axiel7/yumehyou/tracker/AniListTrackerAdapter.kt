@@ -27,27 +27,27 @@ class AniListTrackerAdapter(
     private val activityRepository: ActivityRepository,
     private val favoriteRepository: FavoriteRepository,
     private val searchRepository: SearchRepository,
-) : TrackerAdapter {
+) : BaseTrackerAdapter() {
 
     override val trackerType: TrackerType = TrackerType.ANILIST
     override val capabilities: TrackerCapabilities = anilistTrackerCapabilities
 
-    val isLoggedIn = defaultPreferencesRepository.isLoggedIn
+    override val isLoggedIn = defaultPreferencesRepository.isLoggedIn
 
-    suspend fun onAuthRedirect(uri: Uri) =
+    override suspend fun onAuthRedirect(uri: Uri) =
         loginRepository.parseRedirectUri(uri)
 
-    suspend fun onNewToken(token: String) =
+    override suspend fun onNewToken(token: String) =
         loginRepository.onNewToken(token)
 
-    suspend fun logOut() =
+    override suspend fun logOut() =
         loginRepository.logOut()
 
-    fun getLibraryCollection(
+    override fun getLibraryCollection(
         userId: Int,
         mediaType: MediaType,
         sort: List<MediaListSort>,
-        fetchFromNetwork: Boolean = false,
+        fetchFromNetwork: Boolean,
         chunk: Int?,
         perChunk: Int?,
     ) = mediaListRepository.getMediaListCollection(
@@ -59,13 +59,13 @@ class AniListTrackerAdapter(
         perChunk = perChunk,
     )
 
-    fun getAnimeList(
+    override fun getAnimeList(
         userId: Int,
         statusIn: List<MediaListStatus>?,
         sort: List<MediaListSort>,
-        fetchFromNetwork: Boolean = false,
+        fetchFromNetwork: Boolean,
         page: Int?,
-        perPage: Int? = 25,
+        perPage: Int?,
     ) = mediaListRepository.getUserMediaList(
         userId = userId,
         mediaType = MediaType.ANIME,
@@ -76,13 +76,13 @@ class AniListTrackerAdapter(
         perPage = perPage,
     )
 
-    fun getMangaList(
+    override fun getMangaList(
         userId: Int,
         statusIn: List<MediaListStatus>?,
         sort: List<MediaListSort>,
-        fetchFromNetwork: Boolean = false,
+        fetchFromNetwork: Boolean,
         page: Int?,
-        perPage: Int? = 25,
+        perPage: Int?,
     ) = mediaListRepository.getUserMediaList(
         userId = userId,
         mediaType = MediaType.MANGA,
@@ -93,20 +93,20 @@ class AniListTrackerAdapter(
         perPage = perPage,
     )
 
-    fun updateEntry(
-        oldEntry: BasicMediaListEntry? = null,
+    override fun updateEntry(
+        oldEntry: BasicMediaListEntry?,
         mediaId: Int,
-        status: MediaListStatus? = null,
-        score: Double? = null,
-        advancedScores: Collection<Double>? = null,
-        progress: Int? = null,
-        progressVolumes: Int? = null,
-        startedAt: FuzzyDate? = oldEntry?.startedAt?.fuzzyDate,
-        completedAt: FuzzyDate? = oldEntry?.completedAt?.fuzzyDate,
-        repeat: Int? = null,
-        private: Boolean? = null,
-        hiddenFromStatusLists: Boolean? = null,
-        notes: String? = null,
+        status: MediaListStatus?,
+        score: Double?,
+        advancedScores: Collection<Double>?,
+        progress: Int?,
+        progressVolumes: Int?,
+        startedAt: FuzzyDate?,
+        completedAt: FuzzyDate?,
+        repeat: Int?,
+        isPrivate: Boolean?,
+        hiddenFromStatusLists: Boolean?,
+        notes: String?,
     ) = mediaListRepository.updateEntry(
         oldEntry = oldEntry,
         mediaId = mediaId,
@@ -118,64 +118,88 @@ class AniListTrackerAdapter(
         startedAt = startedAt,
         completedAt = completedAt,
         repeat = repeat,
-        private = private,
+        private = isPrivate,
         hiddenFromStatusLists = hiddenFromStatusLists,
         notes = notes,
     )
 
-    fun updateStatus(
-        oldEntry: BasicMediaListEntry? = null,
+    override fun updateStatus(
+        oldEntry: BasicMediaListEntry?,
         mediaId: Int,
         status: MediaListStatus,
-    ) = updateEntry(
+    ) = updateEntryWithOldEntryDefaults(
         oldEntry = oldEntry,
         mediaId = mediaId,
         status = status,
     )
 
-    fun updateProgress(
-        oldEntry: BasicMediaListEntry? = null,
+    override fun updateProgress(
+        oldEntry: BasicMediaListEntry?,
         mediaId: Int,
-        progress: Int? = null,
-        progressVolumes: Int? = null,
-    ) = updateEntry(
+        progress: Int?,
+        progressVolumes: Int?,
+    ) = updateEntryWithOldEntryDefaults(
         oldEntry = oldEntry,
         mediaId = mediaId,
         progress = progress,
         progressVolumes = progressVolumes,
     )
 
-    fun updateScore(
-        oldEntry: BasicMediaListEntry? = null,
+    override fun updateScore(
+        oldEntry: BasicMediaListEntry?,
         mediaId: Int,
-        score: Double? = null,
-        advancedScores: Collection<Double>? = null,
-    ) = updateEntry(
+        score: Double?,
+        advancedScores: Collection<Double>?,
+    ) = updateEntryWithOldEntryDefaults(
         oldEntry = oldEntry,
         mediaId = mediaId,
         score = score,
         advancedScores = advancedScores,
     )
 
-    fun getMyProfile(fetchFromNetwork: Boolean = false) =
+    private fun updateEntryWithOldEntryDefaults(
+        oldEntry: BasicMediaListEntry?,
+        mediaId: Int,
+        status: MediaListStatus? = null,
+        score: Double? = null,
+        advancedScores: Collection<Double>? = null,
+        progress: Int? = null,
+        progressVolumes: Int? = null,
+    ) = updateEntry(
+        oldEntry = oldEntry,
+        mediaId = mediaId,
+        status = status,
+        score = score,
+        advancedScores = advancedScores,
+        progress = progress,
+        progressVolumes = progressVolumes,
+        startedAt = oldEntry?.startedAt?.fuzzyDate,
+        completedAt = oldEntry?.completedAt?.fuzzyDate,
+        repeat = null,
+        isPrivate = null,
+        hiddenFromStatusLists = null,
+        notes = null,
+    )
+
+    override fun getMyProfile(fetchFromNetwork: Boolean) =
         userRepository.getMyUserInfo(fetchFromNetwork = fetchFromNetwork)
 
-    fun getProfile(
-        userId: Int? = null,
-        username: String? = null,
-        fetchFromNetwork: Boolean = false,
+    override fun getProfile(
+        userId: Int?,
+        username: String?,
+        fetchFromNetwork: Boolean,
     ) = userRepository.getUserInfo(
         userId = userId,
         username = username,
         fetchFromNetwork = fetchFromNetwork,
     )
 
-    fun getActivityFeed(
+    override fun getActivityFeed(
         isFollowing: Boolean,
         typeIn: List<ActivityType>,
-        fetchFromNetwork: Boolean = false,
+        fetchFromNetwork: Boolean,
         page: Int,
-        perPage: Int = 25,
+        perPage: Int,
     ) = activityRepository.getActivityFeed(
         isFollowing = isFollowing,
         typeIn = typeIn,
@@ -184,12 +208,12 @@ class AniListTrackerAdapter(
         perPage = perPage,
     )
 
-    fun getUserActivity(
+    override fun getUserActivity(
         userId: Int,
-        sort: List<ActivitySort> = listOf(ActivitySort.ID_DESC),
-        fetchFromNetwork: Boolean = false,
+        sort: List<ActivitySort>,
+        fetchFromNetwork: Boolean,
         page: Int,
-        perPage: Int = 25,
+        perPage: Int,
     ) = userRepository.getUserActivity(
         userId = userId,
         sort = sort,
@@ -198,10 +222,10 @@ class AniListTrackerAdapter(
         perPage = perPage,
     )
 
-    fun getFavoriteAnime(
+    override fun getFavoriteAnime(
         userId: Int,
         page: Int,
-        perPage: Int = 25,
+        perPage: Int,
         fetchFromNetwork: Boolean,
     ) = favoriteRepository.getFavoriteAnime(
         userId = userId,
@@ -210,12 +234,12 @@ class AniListTrackerAdapter(
         fetchFromNetwork = fetchFromNetwork,
     )
 
-    suspend fun toggleFavorite(
-        animeId: Int? = null,
-        mangaId: Int? = null,
-        characterId: Int? = null,
-        staffId: Int? = null,
-        studioId: Int? = null,
+    override suspend fun toggleFavorite(
+        animeId: Int?,
+        mangaId: Int?,
+        characterId: Int?,
+        staffId: Int?,
+        studioId: Int?,
     ) = favoriteRepository.toggleFavorite(
         animeId = animeId,
         mangaId = mangaId,
@@ -224,10 +248,10 @@ class AniListTrackerAdapter(
         studioId = studioId,
     )
 
-    fun getFavoriteManga(
+    override fun getFavoriteManga(
         userId: Int,
         page: Int,
-        perPage: Int = 25,
+        perPage: Int,
         fetchFromNetwork: Boolean,
     ) = favoriteRepository.getFavoriteManga(
         userId = userId,
@@ -236,10 +260,10 @@ class AniListTrackerAdapter(
         fetchFromNetwork = fetchFromNetwork,
     )
 
-    fun getFavoriteCharacters(
+    override fun getFavoriteCharacters(
         userId: Int,
         page: Int,
-        perPage: Int = 25,
+        perPage: Int,
         fetchFromNetwork: Boolean,
     ) = favoriteRepository.getFavoriteCharacters(
         userId = userId,
@@ -248,10 +272,10 @@ class AniListTrackerAdapter(
         fetchFromNetwork = fetchFromNetwork,
     )
 
-    fun getFavoriteStaff(
+    override fun getFavoriteStaff(
         userId: Int,
         page: Int,
-        perPage: Int = 25,
+        perPage: Int,
         fetchFromNetwork: Boolean,
     ) = favoriteRepository.getFavoriteStaff(
         userId = userId,
@@ -260,10 +284,10 @@ class AniListTrackerAdapter(
         fetchFromNetwork = fetchFromNetwork,
     )
 
-    fun getFavoriteStudios(
+    override fun getFavoriteStudios(
         userId: Int,
         page: Int,
-        perPage: Int = 25,
+        perPage: Int,
         fetchFromNetwork: Boolean,
     ) = favoriteRepository.getFavoriteStudio(
         userId = userId,
@@ -272,10 +296,10 @@ class AniListTrackerAdapter(
         fetchFromNetwork = fetchFromNetwork,
     )
 
-    fun getFollowers(
+    override fun getFollowers(
         userId: Int,
         page: Int,
-        perPage: Int = 25,
+        perPage: Int,
         fetchFromNetwork: Boolean,
     ) = userRepository.getFollowers(
         userId = userId,
@@ -284,10 +308,10 @@ class AniListTrackerAdapter(
         fetchFromNetwork = fetchFromNetwork,
     )
 
-    fun getFollowing(
+    override fun getFollowing(
         userId: Int,
         page: Int,
-        perPage: Int = 25,
+        perPage: Int,
         fetchFromNetwork: Boolean,
     ) = userRepository.getFollowing(
         userId = userId,
@@ -296,11 +320,11 @@ class AniListTrackerAdapter(
         fetchFromNetwork = fetchFromNetwork,
     )
 
-    fun searchMedia(
+    override fun searchMedia(
         mediaType: MediaType,
         query: String,
         page: Int,
-        perPage: Int = 25,
+        perPage: Int,
     ) = searchRepository.searchMedia(
         mediaType = mediaType,
         query = query,
@@ -308,14 +332,14 @@ class AniListTrackerAdapter(
         perPage = perPage,
     )
 
-    fun getMediaDetails(mediaId: Int) =
+    override fun getMediaDetails(mediaId: Int) =
         mediaRepository.getMediaDetails(mediaId = mediaId)
 
-    fun getMediaActivity(
+    override fun getMediaActivity(
         mediaId: Int,
-        userId: Int? = null,
+        userId: Int?,
         page: Int,
-        perPage: Int = 25,
+        perPage: Int,
     ) = mediaRepository.getMediaActivityPage(
         mediaId = mediaId,
         userId = userId,
