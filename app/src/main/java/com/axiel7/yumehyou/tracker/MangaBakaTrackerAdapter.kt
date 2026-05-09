@@ -13,8 +13,6 @@ import com.axiel7.yumehyou.tracker.mangabaka.MangaBakaAuthService
 import com.axiel7.yumehyou.tracker.mangabaka.MangaBakaTrackerClient
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import org.json.JSONArray
-import org.json.JSONObject
 
 class MangaBakaTrackerAdapter(
     private val authService: MangaBakaAuthService,
@@ -44,14 +42,18 @@ class MangaBakaTrackerAdapter(
         fetchFromNetwork: Boolean,
         chunk: Int?,
         perChunk: Int?,
-    ) = getMangaList(
-        userId = userId,
-        statusIn = null,
-        sort = sort,
-        fetchFromNetwork = fetchFromNetwork,
-        page = chunk,
-        perPage = perChunk,
-    )
+    ) = if (mediaType == MediaType.MANGA) {
+        getMangaList(
+            userId = userId,
+            statusIn = null,
+            sort = sort,
+            fetchFromNetwork = fetchFromNetwork,
+            page = chunk,
+            perPage = perChunk,
+        )
+    } else {
+        resultFlow { DataResult.Error("MangaBaka only supports manga libraries") }
+    }
 
     override fun getMangaList(
         userId: Int,
@@ -193,15 +195,15 @@ class MangaBakaTrackerAdapter(
         if (mediaType != MediaType.MANGA) {
             DataResult.Error("MangaBaka only supports manga search")
         } else {
-            metadataProvider.searchManga(query = query, page = page, perPage = perPage).toJsonResult()
+            metadataProvider.searchManga(query = query, page = page, perPage = perPage)
         }
     }
 
     override fun getMediaDetails(mediaId: Int) = resultFlow {
-        metadataProvider.getMangaDetails(mediaId.toString()).toJsonResult()
+        metadataProvider.getMangaDetails(mediaId.toString())
     }
 
-    private fun resultFlow(block: suspend () -> DataResult<String>) = flow {
+    private fun <T> resultFlow(block: suspend () -> DataResult<T>) = flow {
         emit(block())
     }
 }
@@ -215,20 +217,5 @@ private fun MediaListStatus.toMangaBakaState(): String {
         MediaListStatus.PLANNING -> "plan_to_read"
         MediaListStatus.REPEATING -> "rereading"
         else -> "plan_to_read"
-    }
-}
-
-private fun DataResult<*>.toJsonResult(): DataResult<String> {
-    return when (this) {
-        is DataResult.Error -> DataResult.Error(message)
-        is DataResult.Success<*> -> DataResult.Success(
-            when (val value = data) {
-                is String -> value
-                is Iterable<*> -> JSONArray(value.toList()).toString()
-                else -> JSONObject.wrap(value).toString()
-            },
-        )
-
-        DataResult.Loading -> DataResult.Error("Unexpected loading state")
     }
 }
