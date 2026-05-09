@@ -56,3 +56,35 @@ data class ExternalLink(
     val iconUrl: String? = null,
     val colorHex: String? = null,
 )
+
+data class CollectionEntry(
+    val id: String,
+    val title: String,
+    val format: String? = null,
+    val type: String? = null,
+    val status: String? = null,
+    val medium: String? = null,
+    val publisherName: String? = null,
+    val editionName: String? = null,
+    val countMain: Int? = null,
+)
+
+data class WorkEntry(
+    val id: String,
+    val subTitle: String,
+    val countType: String? = null,
+    val releaseDate: String? = null,
+    val sequence: String? = null,
+    val pages: Int? = null,
+    val imageUrl: String? = null,
+    val price: String? = null,
+)
+
+data class NewsEntry(
+    val id: String,
+    val title: String,
+    val url: String,
+    val author: String? = null,
+    val source: String? = null,
+    val publishedAt: String? = null,
+)

@@ -10,12 +10,16 @@ import com.axiel7.anihyou.core.domain.repository.MediaListRepository
 import com.axiel7.anihyou.core.domain.repository.MediaRepository
 import com.axiel7.anihyou.core.domain.repository.SearchRepository
 import com.axiel7.anihyou.core.domain.repository.UserRepository
+import com.axiel7.yumehyou.metadata.MangaMetadataProvider
 import com.axiel7.yumehyou.core.model.TrackerType
 import com.axiel7.yumehyou.tracker.mal.JikanApiClient
 import com.axiel7.yumehyou.tracker.mal.MalApiClient
 import com.axiel7.yumehyou.tracker.mal.MalAuthService
 import com.axiel7.yumehyou.tracker.mal.MalMetadataProvider
 import com.axiel7.yumehyou.tracker.mal.MalSessionStore
+import com.axiel7.yumehyou.tracker.mangabaka.MangaBakaAuthService
+import com.axiel7.yumehyou.tracker.mangabaka.MangaBakaSessionStore
+import com.axiel7.yumehyou.tracker.mangabaka.MangaBakaTrackerClient
 import org.koin.dsl.module
 
 interface TrackerManager {
@@ -63,6 +67,9 @@ class AniListTrackerGateway(
     malAuthService: MalAuthService,
     malApiClient: MalApiClient,
     malMetadataProvider: MalMetadataProvider,
+    mangaBakaAuthService: MangaBakaAuthService,
+    mangaBakaTrackerClient: MangaBakaTrackerClient,
+    mangaBakaMetadataProvider: MangaMetadataProvider,
     adapters: List<TrackerAdapter> = listOf(
         AniListTrackerAdapter(
             loginRepository = loginRepository,
@@ -79,6 +86,11 @@ class AniListTrackerGateway(
             malApiClient = malApiClient,
             malMetadataProvider = malMetadataProvider,
         ),
+        MangaBakaTrackerAdapter(
+            authService = mangaBakaAuthService,
+            trackerClient = mangaBakaTrackerClient,
+            metadataProvider = mangaBakaMetadataProvider,
+        ),
     ) + defaultTrackerAdapters,
     override val trackerManager: TrackerManager = DefaultTrackerManager(adapters),
 ) : TrackerGateway
@@ -89,6 +101,9 @@ val trackerModule = module {
     single<MalApiClient> { MalApiClient(client = get(), authService = get()) }
     single<JikanApiClient> { JikanApiClient(client = get()) }
     single<MalMetadataProvider> { MalMetadataProvider(malApiClient = get(), jikanApiClient = get()) }
+    single<MangaBakaSessionStore> { MangaBakaSessionStore(dataStore = get<DataStore<Preferences>>()) }
+    single<MangaBakaAuthService> { MangaBakaAuthService(sessionStore = get()) }
+    single<MangaBakaTrackerClient> { MangaBakaTrackerClient(client = get(), authService = get()) }
 
     single<TrackerGateway> {
         AniListTrackerGateway(
@@ -103,6 +118,9 @@ val trackerModule = module {
             malAuthService = get(),
             malApiClient = get(),
             malMetadataProvider = get(),
+            mangaBakaAuthService = get(),
+            mangaBakaTrackerClient = get(),
+            mangaBakaMetadataProvider = get(),
         )
     }
 }

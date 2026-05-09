@@ -2,7 +2,7 @@
 
 This document summarizes the current architecture of `xkana-shii/YumeHyou` and maps where key concerns live.
 
-## 0) YumeHyou additive architecture status (Phases 3-7)
+## 0) YumeHyou additive architecture status (Phases 3-8)
 
 ### Phase 3: additive YumeHyou package layer
 
@@ -44,6 +44,13 @@ This document summarizes the current architecture of `xkana-shii/YumeHyou` and m
 - MAL responsibilities are split by role: `MalApiClient` (official authenticated API), `MalAuthService` (token/session lifecycle + refresh), `JikanApiClient` (supplemental public data), and `MalMetadataProvider` (official-first metadata/search fallback to Jikan) (`/app/src/main/java/com/axiel7/yumehyou/tracker/mal/*`).
 - `TrackerGateway` now wires MAL adapter dependencies in DI and registers `MalTrackerAdapter` alongside `AniListTrackerAdapter`, while capability-only defaults remain for trackers not yet implemented (`/app/src/main/java/com/axiel7/yumehyou/tracker/TrackerGateway.kt`).
 - `malTrackerCapabilities` now declares only currently implemented MAL support (anime/manga tracking operations, notes/progress/status/score/rewatch updates, profile, favorites/social via supplemental data, external links) (`/app/src/main/java/com/axiel7/yumehyou/tracker/TrackerCapabilities.kt`).
+
+### Phase 8: MangaBaka metadata + tracker integration
+
+- Manga metadata is now routed through a dedicated `MangaBakaMetadataProvider` backed by a public `MangaBakaMetadataClient`, while the top-level `MetadataProvider` keeps AniHyou’s upstream `MediaRepository` for anime and exposes MangaBaka as the preferred manga metadata source (`/app/src/main/java/com/axiel7/yumehyou/metadata/*`).
+- MangaBaka metadata mapping now targets YumeHyou’s unified domain model, including tracker mappings/direct URLs plus additive `UnifiedMedia` fields for publishers, collections, works, and news (`/app/src/main/java/com/axiel7/yumehyou/core/model/UnifiedMedia.kt`, `/app/src/main/java/com/axiel7/yumehyou/core/model/PeopleAndLinks.kt`).
+- Authenticated MangaBaka tracking is separated from metadata lookup: `MangaBakaAuthService` + `MangaBakaSessionStore` manage session state, `MangaBakaTrackerClient` handles authenticated library/profile requests, and `MangaBakaTrackerAdapter` plugs those into the existing `TrackerAdapter` contract (`/app/src/main/java/com/axiel7/yumehyou/tracker/MangaBakaTrackerAdapter.kt`, `/app/src/main/java/com/axiel7/yumehyou/tracker/mangabaka/*`).
+- `TrackerGateway` now registers the real MangaBaka adapter in DI, and `mangaBakaTrackerCapabilities` declares the currently wired Phase 8 MangaBaka surface (manga tracking, notes/status/progress/score/reread updates, profile, content-preference/export/link/title-language support) (`/app/src/main/java/com/axiel7/yumehyou/tracker/TrackerGateway.kt`, `/app/src/main/java/com/axiel7/yumehyou/tracker/TrackerCapabilities.kt`).
 
 ## 1) High-level module layout
 

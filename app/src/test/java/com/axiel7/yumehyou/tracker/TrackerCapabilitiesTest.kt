@@ -72,6 +72,23 @@ class TrackerCapabilitiesTest {
     }
 
     @Test
+    fun mangaBakaCapabilitiesMatchPhase8Surface() {
+        assertTrue(mangaBakaTrackerCapabilities.supports(TrackerCapability.MANGA_TRACKING))
+        assertTrue(mangaBakaTrackerCapabilities.supports(TrackerCapability.NOTES))
+        assertTrue(mangaBakaTrackerCapabilities.supports(TrackerCapability.CUSTOM_TAGS_LABELS))
+        assertTrue(mangaBakaTrackerCapabilities.supports(TrackerCapability.SCORE_UPDATES))
+        assertTrue(mangaBakaTrackerCapabilities.supports(TrackerCapability.PROGRESS_UPDATES))
+        assertTrue(mangaBakaTrackerCapabilities.supports(TrackerCapability.STATUS_UPDATES))
+        assertTrue(mangaBakaTrackerCapabilities.supports(TrackerCapability.REWATCH_REREAD))
+        assertTrue(mangaBakaTrackerCapabilities.supports(TrackerCapability.PROFILE_DATA))
+        assertTrue(mangaBakaTrackerCapabilities.supports(TrackerCapability.EXPORT))
+        assertTrue(mangaBakaTrackerCapabilities.supports(TrackerCapability.ADULT_CONTENT_PREFERENCES))
+        assertTrue(mangaBakaTrackerCapabilities.supports(TrackerCapability.EXTERNAL_LINKS))
+        assertTrue(mangaBakaTrackerCapabilities.supports(TrackerCapability.TITLE_LANGUAGE_SETTINGS))
+        assertFalse(mangaBakaTrackerCapabilities.supports(TrackerCapability.ANIME_TRACKING))
+    }
+
+    @Test
     fun gatewayCanQueryCapabilitiesByTrackerType() {
         val malAdapter = object : BaseTrackerAdapter() {
             override val trackerType: TrackerType = TrackerType.MY_ANIME_LIST
@@ -85,7 +102,7 @@ class TrackerCapabilitiesTest {
 
         assertTrue(gateway.supports(TrackerType.MY_ANIME_LIST, TrackerCapability.SCORE_UPDATES))
         assertFalse(gateway.supports(TrackerType.MANGA_BAKA, TrackerCapability.FAVORITES))
-        assertNotNull(gateway.getCapabilities(TrackerType.ANILIST))
+        assertNotNull(gateway.getCapabilities(TrackerType.MANGA_UPDATES))
     }
 
     @Test

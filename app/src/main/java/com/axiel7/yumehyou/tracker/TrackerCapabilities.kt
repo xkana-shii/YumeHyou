@@ -123,6 +123,24 @@ val malTrackerCapabilities = TrackerCapabilities(
     ),
 )
 
+val mangaBakaTrackerCapabilities = TrackerCapabilities(
+    trackerType = TrackerType.MANGA_BAKA,
+    supported = setOf(
+        TrackerCapability.MANGA_TRACKING,
+        TrackerCapability.NOTES,
+        TrackerCapability.CUSTOM_TAGS_LABELS,
+        TrackerCapability.SCORE_UPDATES,
+        TrackerCapability.PROGRESS_UPDATES,
+        TrackerCapability.STATUS_UPDATES,
+        TrackerCapability.REWATCH_REREAD,
+        TrackerCapability.PROFILE_DATA,
+        TrackerCapability.EXPORT,
+        TrackerCapability.ADULT_CONTENT_PREFERENCES,
+        TrackerCapability.EXTERNAL_LINKS,
+        TrackerCapability.TITLE_LANGUAGE_SETTINGS,
+    ),
+)
+
 private data class StaticTrackerAdapter(
     override val trackerType: TrackerType,
     override val capabilities: TrackerCapabilities,
@@ -153,15 +171,5 @@ val defaultTrackerAdapters: List<TrackerAdapter> = listOf(
         TrackerCapability.FOLLOWERS_FOLLOWING,
         TrackerCapability.PROFILE_DATA,
         TrackerCapability.EXTERNAL_LINKS,
-    ),
-    staticTrackerAdapter(
-        trackerType = TrackerType.MANGA_BAKA,
-        TrackerCapability.MANGA_TRACKING,
-        TrackerCapability.NOTES,
-        TrackerCapability.SCORE_UPDATES,
-        TrackerCapability.PROGRESS_UPDATES,
-        TrackerCapability.STATUS_UPDATES,
-        TrackerCapability.EXTERNAL_LINKS,
-        TrackerCapability.TITLE_LANGUAGE_SETTINGS,
     ),
 )
