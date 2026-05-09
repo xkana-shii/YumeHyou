@@ -1,0 +1,71 @@
+package com.axiel7.yumehyou.tracker
+
+import com.axiel7.anihyou.core.domain.repository.MediaListRepository
+import com.axiel7.yumehyou.core.model.TrackerType
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
+import org.junit.Test
+
+class TrackerCapabilitiesTest {
+    @Test
+    fun capabilityFactoryDeduplicatesEntries() {
+        val capabilities = TrackerCapabilities(
+            trackerType = TrackerType.ANILIST,
+            supported = setOf(
+                TrackerCapability.ANIME_TRACKING,
+                TrackerCapability.ANIME_TRACKING,
+            ),
+        )
+
+        assertEquals(setOf(TrackerCapability.ANIME_TRACKING), capabilities.supported)
+    }
+
+    @Test
+    fun anilistAdapterSupportsAllDefinedCapabilities() {
+        val adapter = defaultTrackerAdapters.first { it.trackerType == TrackerType.ANILIST }
+
+        assertTrue(
+            adapter.capabilities.supportsAll(
+                TrackerCapability.ANIME_TRACKING,
+                TrackerCapability.MANGA_TRACKING,
+                TrackerCapability.NOTES,
+                TrackerCapability.CUSTOM_TAGS_LABELS,
+                TrackerCapability.SCORE_UPDATES,
+                TrackerCapability.PROGRESS_UPDATES,
+                TrackerCapability.STATUS_UPDATES,
+                TrackerCapability.REWATCH_REREAD,
+                TrackerCapability.FAVORITES,
+                TrackerCapability.FOLLOWERS_FOLLOWING,
+                TrackerCapability.PROFILE_DATA,
+                TrackerCapability.ACTIVITY_DATA,
+                TrackerCapability.EXPORT,
+                TrackerCapability.ADULT_CONTENT_PREFERENCES,
+                TrackerCapability.EXTERNAL_LINKS,
+                TrackerCapability.TITLE_LANGUAGE_SETTINGS,
+            )
+        )
+    }
+
+    @Test
+    fun mangaUpdatesAdapterIsMangaOnly() {
+        val adapter = defaultTrackerAdapters.first { it.trackerType == TrackerType.MANGA_UPDATES }
+
+        assertTrue(adapter.capabilities.mangaTracking)
+        assertFalse(adapter.capabilities.animeTracking)
+    }
+
+    @Test
+    fun gatewayCanQueryCapabilitiesByTrackerType() {
+        val gateway = object : TrackerGateway {
+            override val mediaListRepository: MediaListRepository
+                get() = error("Not needed for capability lookups")
+            override val adapters = defaultTrackerAdapters
+        }
+
+        assertTrue(gateway.supports(TrackerType.MY_ANIME_LIST, TrackerCapability.SCORE_UPDATES))
+        assertFalse(gateway.supports(TrackerType.MANGA_BAKA, TrackerCapability.FAVORITES))
+        assertNotNull(gateway.getCapabilities(TrackerType.ANILIST))
+    }
+}
