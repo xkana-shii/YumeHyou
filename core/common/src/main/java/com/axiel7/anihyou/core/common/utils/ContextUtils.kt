@@ -20,11 +20,11 @@ import com.axiel7.anihyou.core.base.APP_PACKAGE_NAME
 import com.axiel7.anihyou.core.resources.R
 
 object ContextUtils {
+    fun Context.showToast(message: String?) = message?.let { Toast.makeText(this, message, Toast.LENGTH_SHORT).show() }
 
-    fun Context.showToast(message: String?) =
-        message?.let { Toast.makeText(this, message, Toast.LENGTH_SHORT).show() }
-
-    fun Context.showToast(@StringRes stringRes: Int) = showToast(getString(stringRes))
+    fun Context.showToast(
+        @StringRes stringRes: Int,
+    ) = showToast(getString(stringRes))
 
     fun Context.openActionView(url: String) {
         openActionView(url.toUri())
@@ -44,14 +44,15 @@ object ContextUtils {
     fun Context.openByDefaultSettings() {
         try {
             // Samsung OneUI 4 bug can't open ACTION_APP_OPEN_BY_DEFAULT_SETTINGS
-            val action = if (Build.MANUFACTURER.equals("samsung", ignoreCase = true)) {
-                Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-            } else {
-                Settings.ACTION_APP_OPEN_BY_DEFAULT_SETTINGS
-            }
+            val action =
+                if (Build.MANUFACTURER.equals("samsung", ignoreCase = true)) {
+                    Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                } else {
+                    Settings.ACTION_APP_OPEN_BY_DEFAULT_SETTINGS
+                }
             Intent(
                 action,
-                "package:${packageName}".toUri()
+                "package:$packageName".toUri(),
             ).apply {
                 startActivity(this)
             }
@@ -83,24 +84,23 @@ object ContextUtils {
                 }
             } else {
                 val browsers = findBrowserIntentActivities(PackageManager.MATCH_ALL)
-                val intents = browsers.map {
-                    Intent(Intent.ACTION_VIEW, uri).apply {
-                        setPackage(it.activityInfo.packageName)
+                val intents =
+                    browsers.map {
+                        Intent(Intent.ACTION_VIEW, uri).apply {
+                            setPackage(it.activityInfo.packageName)
+                        }
                     }
-                }
                 startActivity(
                     Intent.createChooser(this, null).apply {
                         putExtra(Intent.EXTRA_INITIAL_INTENTS, intents.toTypedArray())
-                    }
+                    },
                 )
             }
         }
     }
 
     /** Finds all the browsers installed on the device */
-    private fun Context.findBrowserIntentActivities(
-        flags: Int = 0
-    ): List<ResolveInfo> {
+    private fun Context.findBrowserIntentActivities(flags: Int = 0): List<ResolveInfo> {
         val emptyBrowserIntent = Intent(Intent.ACTION_VIEW, Uri.fromParts("http", "", null))
 
         return packageManager
@@ -110,18 +110,21 @@ object ContextUtils {
     }
 
     /** Custom compat method until Google decides to make one */
-    private fun PackageManager.queryIntentActivitiesCompat(intent: Intent, flags: Int = 0) =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            queryIntentActivities(intent, PackageManager.ResolveInfoFlags.of(flags.toLong()))
-        } else {
-            queryIntentActivities(intent, flags)
-        }
-
-    fun Context.getActivity(): Activity? = when (this) {
-        is Activity -> this
-        is ContextWrapper -> baseContext.getActivity()
-        else -> null
+    private fun PackageManager.queryIntentActivitiesCompat(
+        intent: Intent,
+        flags: Int = 0,
+    ) = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        queryIntentActivities(intent, PackageManager.ResolveInfoFlags.of(flags.toLong()))
+    } else {
+        queryIntentActivities(intent, flags)
     }
+
+    fun Context.getActivity(): Activity? =
+        when (this) {
+            is Activity -> this
+            is ContextWrapper -> baseContext.getActivity()
+            else -> null
+        }
 
     fun Context.copyToClipBoard(text: String) {
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
