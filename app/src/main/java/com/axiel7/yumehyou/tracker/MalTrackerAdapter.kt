@@ -13,25 +13,28 @@ import com.axiel7.yumehyou.tracker.mal.MalAuthService
 import com.axiel7.yumehyou.tracker.mal.MalMetadataProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import org.json.JSONObject
 
 class MalTrackerAdapter(
     private val malAuthService: MalAuthService,
     private val malApiClient: MalApiClient,
     private val malMetadataProvider: MalMetadataProvider,
 ) : BaseTrackerAdapter() {
+    private var cachedUsername: String? = null
+
     override val trackerType: TrackerType = TrackerType.MY_ANIME_LIST
     override val capabilities: TrackerCapabilities = malTrackerCapabilities
 
     override val isLoggedIn: Flow<Boolean> = malAuthService.isLoggedIn
 
     override suspend fun onAuthRedirect(uri: Uri) =
-        malAuthService.onAuthRedirect(uri)
+        malAuthService.onAuthRedirect(uri).also { cachedUsername = null }
 
     override suspend fun onNewToken(token: String) =
-        malAuthService.onNewToken(token)
+        malAuthService.onNewToken(token).also { cachedUsername = null }
 
     override suspend fun logOut() =
-        malAuthService.logOut()
+        malAuthService.logOut().also { cachedUsername = null }
 
     override fun getLibraryCollection(
         userId: Int,
@@ -311,18 +314,18 @@ class MalTrackerAdapter(
     }
 
     private suspend fun resolveCurrentUsername(): String? {
+        cachedUsername?.let { return it }
         val profile = malApiClient.getMyProfile()
         if (profile !is DataResult.Success<*>) return null
         val profileBody = profile.data as? String ?: return null
-        val match = NAME_REGEX.find(profileBody)
-        return match?.groupValues?.getOrNull(1)
+        val username = runCatching { JSONObject(profileBody).optString("name") }
+            .getOrNull()
+            ?.takeIf { it.isNotBlank() }
+        cachedUsername = username
+        return username
     }
 
     private fun resultFlow(block: suspend () -> DataResult<String>) = flow {
         emit(block())
-    }
-
-    companion object {
-        private val NAME_REGEX = Regex("\"name\"\\s*:\\s*\"([^\"]+)\"")
     }
 }
