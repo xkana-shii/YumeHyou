@@ -9,17 +9,19 @@ data class Title(
 ) {
     val all: List<String>
         get() = buildList {
-            add(preferred)
-            addDistinct(listOfNotNull(romaji, english, native))
-            addDistinct(alternatives)
+            val seen = mutableSetOf<String>()
+
+            appendDistinct(preferred, seen)
+            listOfNotNull(romaji, english, native).forEach { appendDistinct(it, seen) }
+            alternatives.forEach { appendDistinct(it, seen) }
         }
 
-    private fun MutableList<String>.addDistinct(values: List<String>) {
-        val existingValues = toMutableSet()
-        values.forEach { value ->
-            if (value != preferred && existingValues.add(value)) {
-                add(value)
-            }
+    private fun MutableList<String>.appendDistinct(
+        value: String,
+        seen: MutableSet<String>,
+    ) {
+        if (seen.add(value)) {
+            add(value)
         }
     }
 }
