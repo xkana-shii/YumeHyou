@@ -221,7 +221,7 @@ class MalTrackerAdapter(
         staffId: Int?,
         studioId: Int?,
     ): DataResult<*> = DataResult.Error(
-        "MyAnimeList favorites are currently read-only in this adapter; update operations are not supported by official MAL API",
+        "MyAnimeList favorites are currently read-only in this adapter. Update operations are not supported by official MAL API",
     )
 
     override fun getFavoriteManga(
