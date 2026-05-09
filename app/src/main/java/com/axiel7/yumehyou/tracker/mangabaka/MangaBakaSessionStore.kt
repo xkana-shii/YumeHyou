@@ -42,7 +42,10 @@ class MangaBakaSessionStore(
             else preferences[MANGA_BAKA_REFRESH_TOKEN_KEY] = refreshToken
             if (tokenType.isNullOrBlank()) preferences.remove(MANGA_BAKA_TOKEN_TYPE_KEY)
             else preferences[MANGA_BAKA_TOKEN_TYPE_KEY] = tokenType
-            val expiresAt = expiresInSeconds?.let { currentEpochSeconds() + it }
+            val expiresAt = expiresInSeconds?.let {
+                (currentEpochSeconds() + it - TOKEN_EXPIRY_SAFETY_MARGIN_SECONDS)
+                    .coerceAtLeast(currentEpochSeconds())
+            }
             if (expiresAt == null) preferences.remove(MANGA_BAKA_EXPIRES_AT_EPOCH_SECONDS_KEY)
             else preferences[MANGA_BAKA_EXPIRES_AT_EPOCH_SECONDS_KEY] = expiresAt
         }
@@ -63,6 +66,7 @@ class MangaBakaSessionStore(
         private val MANGA_BAKA_TOKEN_TYPE_KEY = stringPreferencesKey("mangabaka_token_type")
         private val MANGA_BAKA_EXPIRES_AT_EPOCH_SECONDS_KEY =
             longPreferencesKey("mangabaka_expires_at_epoch_seconds")
+        private const val TOKEN_EXPIRY_SAFETY_MARGIN_SECONDS = 60L
 
         private fun currentEpochSeconds() = System.currentTimeMillis() / 1_000
     }

@@ -62,12 +62,16 @@ class MangaBakaTrackerAdapter(
         fetchFromNetwork: Boolean,
         page: Int?,
         perPage: Int?,
-    ) = resultFlow {
-        trackerClient.getMyLibrary(
-            state = statusIn?.firstOrNull()?.toMangaBakaState(),
-            page = page ?: 1,
-            limit = perPage ?: 25,
-        )
+    ) = if ((statusIn?.size ?: 0) > 1) {
+        resultFlow { DataResult.Error("MangaBaka supports at most one status filter per request") }
+    } else {
+        resultFlow {
+            trackerClient.getMyLibrary(
+                state = statusIn?.firstOrNull()?.toMangaBakaState(),
+                page = page ?: 1,
+                limit = perPage ?: 25,
+            )
+        }
     }
 
     override fun updateEntry(
