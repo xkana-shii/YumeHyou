@@ -15,8 +15,11 @@ data class Title(
         }
 
     private fun MutableList<String>.addDistinct(values: List<String>) {
-        values
-            .filterNot { it == preferred || contains(it) }
-            .forEach(::add)
+        val existingValues = toMutableSet()
+        values.forEach { value ->
+            if (value != preferred && existingValues.add(value)) {
+                add(value)
+            }
+        }
     }
 }

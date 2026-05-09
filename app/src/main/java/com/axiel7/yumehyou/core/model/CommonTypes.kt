@@ -55,6 +55,9 @@ data class PartialDate(
         require(month == null || month in 1..12) {
             "month must be between 1 and 12"
         }
+        require(day == null || month != null) {
+            "month must be provided when day is set"
+        }
         require(day == null || day in 1..maxDayOfMonth(month, year)) {
             "day must be valid for the provided month and year"
         }

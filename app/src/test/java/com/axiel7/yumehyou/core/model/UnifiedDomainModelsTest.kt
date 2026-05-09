@@ -66,4 +66,11 @@ class UnifiedDomainModelsTest {
             PartialDate(year = 2024, month = 2, day = 30)
         }
     }
+
+    @Test
+    fun partialDateRequiresMonthWhenDayIsProvided() {
+        assertThrows(IllegalArgumentException::class.java) {
+            PartialDate(year = 2024, day = 1)
+        }
+    }
 }
