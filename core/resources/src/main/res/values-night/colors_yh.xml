@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="primary">#C7BAFF</color>
+    <color name="ic_launcher_yh_background">#C7BAFF</color>
+    <color name="ic_launcher_round_yh_background">#C7BAFF</color>
 </resources>

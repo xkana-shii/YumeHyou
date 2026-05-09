@@ -2,4 +2,6 @@
 <resources>
     <color name="primary">#5E31DF</color>
     <color name="accent">#5E31DF</color>
+    <color name="ic_launcher_yh_background">#5E31DF</color>
+    <color name="ic_launcher_round_yh_background">#5E31DF</color>
 </resources>

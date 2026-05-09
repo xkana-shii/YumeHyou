@@ -6,7 +6,7 @@
     </style>
 
     <style name="Theme.MySplash" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_round</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_round_yh</item>
         <item name="postSplashScreenTheme">@style/Theme.AniHyou</item>
     </style>
 
@@ -20,7 +20,7 @@
 
     <style name="WearActivityTheme.Starting" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@android:color/black</item>
-        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_round</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_round_yh</item>
         <item name="postSplashScreenTheme">@android:style/Theme.DeviceDefault</item>
     </style>
 </resources>
