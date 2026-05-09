@@ -5,6 +5,7 @@ import com.axiel7.yumehyou.core.model.TrackerType
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -47,6 +48,22 @@ class TrackerCapabilitiesTest {
     }
 
     @Test
+    fun malCapabilitiesMatchImplementedPhase7Surface() {
+        assertTrue(malTrackerCapabilities.supports(TrackerCapability.ANIME_TRACKING))
+        assertTrue(malTrackerCapabilities.supports(TrackerCapability.MANGA_TRACKING))
+        assertTrue(malTrackerCapabilities.supports(TrackerCapability.NOTES))
+        assertTrue(malTrackerCapabilities.supports(TrackerCapability.STATUS_UPDATES))
+        assertTrue(malTrackerCapabilities.supports(TrackerCapability.PROGRESS_UPDATES))
+        assertTrue(malTrackerCapabilities.supports(TrackerCapability.SCORE_UPDATES))
+        assertTrue(malTrackerCapabilities.supports(TrackerCapability.REWATCH_REREAD))
+        assertTrue(malTrackerCapabilities.supports(TrackerCapability.FAVORITES))
+        assertTrue(malTrackerCapabilities.supports(TrackerCapability.FOLLOWERS_FOLLOWING))
+        assertTrue(malTrackerCapabilities.supports(TrackerCapability.PROFILE_DATA))
+        assertTrue(malTrackerCapabilities.supports(TrackerCapability.EXTERNAL_LINKS))
+        assertFalse(malTrackerCapabilities.supports(TrackerCapability.ACTIVITY_DATA))
+    }
+
+    @Test
     fun mangaUpdatesAdapterIsMangaOnly() {
         val adapter = defaultTrackerAdapters.first { it.trackerType == TrackerType.MANGA_UPDATES }
 
@@ -56,10 +73,14 @@ class TrackerCapabilitiesTest {
 
     @Test
     fun gatewayCanQueryCapabilitiesByTrackerType() {
+        val malAdapter = object : BaseTrackerAdapter() {
+            override val trackerType: TrackerType = TrackerType.MY_ANIME_LIST
+            override val capabilities: TrackerCapabilities = malTrackerCapabilities
+        }
         val gateway = object : TrackerGateway {
             override val mediaListRepository: MediaListRepository
                 get() = error("Not needed for capability lookups")
-            override val trackerManager = DefaultTrackerManager(defaultTrackerAdapters)
+            override val trackerManager = DefaultTrackerManager(listOf(malAdapter) + defaultTrackerAdapters)
         }
 
         assertTrue(gateway.supports(TrackerType.MY_ANIME_LIST, TrackerCapability.SCORE_UPDATES))
@@ -71,7 +92,7 @@ class TrackerCapabilitiesTest {
     fun trackerManagerResolvesAdaptersByTrackerType() {
         val manager = DefaultTrackerManager(defaultTrackerAdapters)
 
-        assertNotNull(manager.getAdapter(TrackerType.MY_ANIME_LIST))
+        assertNull(manager.getAdapter(TrackerType.MY_ANIME_LIST))
         assertNotNull(manager.getAdapter(TrackerType.MANGA_UPDATES))
     }
 }

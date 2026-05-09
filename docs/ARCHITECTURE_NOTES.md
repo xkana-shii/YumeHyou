@@ -2,7 +2,7 @@
 
 This document summarizes the current architecture of `xkana-shii/YumeHyou` and maps where key concerns live.
 
-## 0) YumeHyou additive architecture status (Phases 3-5)
+## 0) YumeHyou additive architecture status (Phases 3-7)
 
 ### Phase 3: additive YumeHyou package layer
 
@@ -37,6 +37,13 @@ This document summarizes the current architecture of `xkana-shii/YumeHyou` and m
 - `TrackerAdapter` is now a reusable tracker operation contract (auth state/login/logout, library fetch, entry updates, profile/activity/favorites/social, search, media details/activity) with `BaseTrackerAdapter` unsupported-operation defaults (`/app/src/main/java/com/axiel7/yumehyou/tracker/TrackerAdapter.kt`).
 - `AniListTrackerAdapter` is the first concrete adapter implementing that contract and delegates calls directly to existing AniHyou repositories (`LoginRepository`, `MediaListRepository`, `MediaRepository`, `UserRepository`, `ActivityRepository`, `FavoriteRepository`, `SearchRepository`) instead of reimplementing AniList logic (`/app/src/main/java/com/axiel7/yumehyou/tracker/AniListTrackerAdapter.kt`).
 - `TrackerManager` was introduced between `TrackerGateway` and adapters (`UI/business -> TrackerGateway -> TrackerManager -> TrackerAdapter`), and `AniListTrackerGateway` now initializes a manager with AniList + capability-only placeholder adapters for future trackers (`/app/src/main/java/com/axiel7/yumehyou/tracker/TrackerGateway.kt`).
+
+### Phase 7: MyAnimeList integration adapter
+
+- A real `MalTrackerAdapter` was added as tracker adapter #2 under the existing `TrackerAdapter` contract (`/app/src/main/java/com/axiel7/yumehyou/tracker/MalTrackerAdapter.kt`).
+- MAL responsibilities are split by role: `MalApiClient` (official authenticated API), `MalAuthService` (token/session lifecycle + refresh), `JikanApiClient` (supplemental public data), and `MalMetadataProvider` (official-first metadata/search fallback to Jikan) (`/app/src/main/java/com/axiel7/yumehyou/tracker/mal/*`).
+- `TrackerGateway` now wires MAL adapter dependencies in DI and registers `MalTrackerAdapter` alongside `AniListTrackerAdapter`, while capability-only defaults remain for trackers not yet implemented (`/app/src/main/java/com/axiel7/yumehyou/tracker/TrackerGateway.kt`).
+- `malTrackerCapabilities` now declares only currently implemented MAL support (anime/manga tracking operations, notes/progress/status/score/rewatch updates, profile, favorites/social via supplemental data, external links) (`/app/src/main/java/com/axiel7/yumehyou/tracker/TrackerCapabilities.kt`).
 
 ## 1) High-level module layout
 
