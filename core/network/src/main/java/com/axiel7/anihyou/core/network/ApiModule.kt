@@ -5,6 +5,7 @@ import com.axiel7.anihyou.core.network.api.CharacterApi
 import com.axiel7.anihyou.core.network.api.FavoriteApi
 import com.axiel7.anihyou.core.network.api.LikeApi
 import com.axiel7.anihyou.core.network.api.MalApi
+import com.axiel7.anihyou.core.network.api.MangaBakaApi
 import com.axiel7.anihyou.core.network.api.MediaApi
 import com.axiel7.anihyou.core.network.api.MediaListApi
 import com.axiel7.anihyou.core.network.api.NotificationsApi
@@ -22,6 +23,7 @@ val apiModule = module {
     singleOf(::FavoriteApi)
     singleOf(::LikeApi)
     singleOf(::MalApi)
+    singleOf(::MangaBakaApi)
     singleOf(::MediaApi)
     singleOf(::MediaListApi)
     singleOf(::NotificationsApi)

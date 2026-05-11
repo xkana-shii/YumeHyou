@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.axiel7.anihyou.core.common.utils.ContextUtils.openActionView
 import com.axiel7.anihyou.core.model.media.AnimeSeason
+import com.axiel7.anihyou.core.model.media.MangaBakaExternalLink
 import com.axiel7.anihyou.core.model.media.episodeNumber
 import com.axiel7.anihyou.core.model.media.externalLinks
 import com.axiel7.anihyou.core.model.media.isAnime
@@ -67,6 +68,14 @@ fun MediaInformationView(
     var showSpoiler by remember { mutableStateOf(false) }
     var showAllTags by remember { mutableStateOf(false) }
     val isAnime = uiState.details?.basicMediaDetails?.isAnime() == true
+    val mangaMetadata = uiState.mangaMetadata
+    val titleRomaji = mangaMetadata?.romanizedTitle ?: uiState.details?.title?.romaji
+    val titleEnglish = mangaMetadata?.preferredTitle ?: uiState.details?.title?.english
+    val titleNative = mangaMetadata?.nativeTitle ?: uiState.details?.title?.native
+    val titleAlternatives = mangaMetadata?.alternateTitles ?: uiState.details?.synonyms.orEmpty()
+    val displayType = mangaMetadata?.type
+    val displayContentRating = mangaMetadata?.contentRating
+    val mangaTags = mangaMetadata?.tags.orEmpty()
 
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -103,29 +112,36 @@ fun MediaInformationView(
         }
         InfoItemView(
             title = stringResource(R.string.source),
-            info = uiState.details?.source?.localized(),
+            info = displayType ?: uiState.details?.source?.localized(),
             modifier = Modifier.defaultPlaceholder(visible = uiState.isLoading)
         )
         InfoItemView(
             title = stringResource(R.string.romaji),
-            info = uiState.details?.title?.romaji,
+            info = titleRomaji,
             modifier = Modifier.defaultPlaceholder(visible = uiState.isLoading)
         )
         InfoItemView(
             title = stringResource(R.string.english),
-            info = uiState.details?.title?.english,
+            info = titleEnglish,
             modifier = Modifier.defaultPlaceholder(visible = uiState.isLoading)
         )
         InfoItemView(
             title = stringResource(R.string.native_title),
-            info = uiState.details?.title?.native,
+            info = titleNative,
             modifier = Modifier.defaultPlaceholder(visible = uiState.isLoading)
         )
-        if (!uiState.details?.synonyms.isNullOrEmpty()) {
+        if (titleAlternatives.isNotEmpty()) {
             InfoItemView(
                 title = stringResource(R.string.synonyms),
-                info = uiState.details.synonyms?.joinToString("\n"),
+                info = titleAlternatives.joinToString("\n"),
                 modifier = Modifier.defaultPlaceholder(visible = uiState.isLoading)
+            )
+        }
+        if (!displayContentRating.isNullOrBlank()) {
+            InfoItemView(
+                title = stringResource(R.string.content_rating),
+                info = displayContentRating,
+                modifier = Modifier.defaultPlaceholder(visible = uiState.isLoading),
             )
         }
         if (isAnime) {
@@ -144,6 +160,42 @@ fun MediaInformationView(
                 onItemClicked = {
                     navigateToStudioDetails(it.id)
                 }
+            )
+        }
+        if (!mangaMetadata?.authors.isNullOrEmpty()) {
+            InfoItemView(
+                title = stringResource(R.string.authors),
+                info = mangaMetadata?.authors?.joinToString("\n"),
+            )
+        }
+        if (!mangaMetadata?.artists.isNullOrEmpty()) {
+            InfoItemView(
+                title = stringResource(R.string.artists),
+                info = mangaMetadata?.artists?.joinToString("\n"),
+            )
+        }
+        if (!mangaMetadata?.publishers.isNullOrEmpty()) {
+            InfoItemView(
+                title = stringResource(R.string.publishers),
+                info = mangaMetadata?.publishers?.joinToString("\n"),
+            )
+        }
+        if (!mangaMetadata?.collections.isNullOrEmpty()) {
+            InfoItemView(
+                title = stringResource(R.string.collections),
+                info = mangaMetadata?.collections?.joinToString("\n") { it.title },
+            )
+        }
+        if (!mangaMetadata?.works.isNullOrEmpty()) {
+            InfoItemView(
+                title = stringResource(R.string.works),
+                info = mangaMetadata?.works?.joinToString("\n") { it.subTitle },
+            )
+        }
+        if (!mangaMetadata?.relatedEntries.isNullOrEmpty()) {
+            InfoItemView(
+                title = stringResource(R.string.related),
+                info = mangaMetadata?.relatedEntries?.joinToString("\n") { it.title },
             )
         }
 
@@ -167,39 +219,53 @@ fun MediaInformationView(
                 .padding(horizontal = 8.dp)
                 .animateContentSize()
         ) {
-            val tags = if (showAllTags) uiState.details?.tags
-            else uiState.details?.tags?.take(TagLimit)
-            tags?.forEach { tag ->
-                if (tag != null) {
-                    if (tag.isMediaSpoiler == false) {
-                        TagChip(
-                            name = tag.name,
-                            description = tag.description,
-                            rank = tag.rank,
-                            onClick = {
-                                uiState.details?.basicMediaDetails?.type?.let { mediaType ->
-                                    navigateToGenreTag(mediaType, null, tag.name)
-                                }
+            if (mangaTags.isNotEmpty()) {
+                val tags = if (showAllTags) mangaTags else mangaTags.take(TagLimit)
+                tags.forEach { tag ->
+                    TagChip(
+                        name = tag,
+                        onClick = {
+                            uiState.details?.basicMediaDetails?.type?.let { mediaType ->
+                                navigateToGenreTag(mediaType, null, tag)
                             }
-                        )
-                    } else {
-                        SpoilerTagChip(
-                            name = tag.name,
-                            description = tag.description,
-                            rank = tag.rank,
-                            visible = showSpoiler,
-                            onClick = {
-                                uiState.details?.basicMediaDetails?.type?.let { mediaType ->
-                                    navigateToGenreTag(mediaType, null, tag.name)
+                        },
+                    )
+                }
+            } else {
+                val tags = if (showAllTags) uiState.details?.tags
+                else uiState.details?.tags?.take(TagLimit)
+                tags?.forEach { tag ->
+                    if (tag != null) {
+                        if (tag.isMediaSpoiler == false) {
+                            TagChip(
+                                name = tag.name,
+                                description = tag.description,
+                                rank = tag.rank,
+                                onClick = {
+                                    uiState.details?.basicMediaDetails?.type?.let { mediaType ->
+                                        navigateToGenreTag(mediaType, null, tag.name)
+                                    }
                                 }
-                            }
-                        )
+                            )
+                        } else {
+                            SpoilerTagChip(
+                                name = tag.name,
+                                description = tag.description,
+                                rank = tag.rank,
+                                visible = showSpoiler,
+                                onClick = {
+                                    uiState.details?.basicMediaDetails?.type?.let { mediaType ->
+                                        navigateToGenreTag(mediaType, null, tag.name)
+                                    }
+                                }
+                            )
+                        }
                     }
                 }
             }
         }//: FlowRow
 
-        if ((uiState.details?.tags?.size ?: 0) > TagLimit) {
+        if ((if (mangaTags.isNotEmpty()) mangaTags.size else (uiState.details?.tags?.size ?: 0)) > TagLimit) {
             MoreLessButton(
                 isExpanded = showAllTags,
                 onClick = { showAllTags = !showAllTags },
@@ -282,8 +348,20 @@ fun MediaInformationView(
         }
 
         // External links
+        val metadataExternalLinks = mangaMetadata?.links.orEmpty()
         uiState.details?.externalLinks()?.let { externalLinks ->
-            if (externalLinks.isNotEmpty()) {
+            val mergedLinks = if (metadataExternalLinks.isNotEmpty()) {
+                metadataExternalLinks + externalLinks.mapNotNull {
+                    val url = it.url ?: return@mapNotNull null
+                    MangaBakaExternalLink(site = it.site, url = url)
+                }
+            } else {
+                externalLinks.mapNotNull {
+                    val url = it.url ?: return@mapNotNull null
+                    MangaBakaExternalLink(site = it.site, url = url)
+                }
+            }
+            if (mergedLinks.isNotEmpty()) {
                 InfoTitle(text = stringResource(R.string.external_links))
                 FlowRow(
                     modifier = Modifier.padding(
@@ -292,18 +370,34 @@ fun MediaInformationView(
                         bottom = 8.dp
                     )
                 ) {
-                    externalLinks.forEach { link ->
+                    mergedLinks.forEach { link ->
                         AssistChip(
-                            onClick = { link.url?.let { context.openActionView(it) } },
+                            onClick = { context.openActionView(link.url) },
                             label = { Text(text = link.site) },
                             modifier = Modifier.padding(horizontal = 4.dp),
-                            trailingIcon = {
-                                link.languageShort()?.let { lang ->
-                                    Text(text = lang)
-                                }
-                            }
                         )
                     }
+                }
+            }
+        }
+
+        if (!mangaMetadata?.trackerMappings.isNullOrEmpty()) {
+            InfoTitle(text = stringResource(R.string.tracker_mappings))
+            FlowRow(
+                modifier = Modifier.padding(
+                    start = 8.dp,
+                    end = 8.dp,
+                    bottom = 8.dp,
+                ),
+            ) {
+                mangaMetadata?.trackerMappings?.forEach { mapping ->
+                    AssistChip(
+                        onClick = {
+                            mapping.url?.let(context::openActionView)
+                        },
+                        label = { Text(text = mapping.trackerName) },
+                        modifier = Modifier.padding(horizontal = 4.dp),
+                    )
                 }
             }
         }

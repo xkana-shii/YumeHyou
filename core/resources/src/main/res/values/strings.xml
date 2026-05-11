@@ -199,6 +199,13 @@
     <string name="trailer">Trailer</string>
     <string name="streaming_sites">Streaming sites</string>
     <string name="external_links">External links</string>
+    <string name="content_rating">Content rating</string>
+    <string name="authors">Authors</string>
+    <string name="artists">Artists</string>
+    <string name="publishers">Publishers</string>
+    <string name="collections">Collections</string>
+    <string name="works">Works</string>
+    <string name="tracker_mappings">Tracker mappings</string>
     <string name="standard">Standard</string>
     <string name="compact">Compact</string>
     <string name="minimal">Minimal</string>

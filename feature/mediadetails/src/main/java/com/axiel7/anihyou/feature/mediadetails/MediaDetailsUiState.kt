@@ -2,6 +2,7 @@ package com.axiel7.anihyou.feature.mediadetails
 
 import androidx.compose.runtime.Immutable
 import com.axiel7.anihyou.core.model.media.AnimeThemes
+import com.axiel7.anihyou.core.model.media.MangaBakaMetadata
 import com.axiel7.anihyou.core.model.media.MediaRelationsAndRecommendations
 import com.axiel7.anihyou.core.model.stats.Stat
 import com.axiel7.anihyou.core.model.stats.overview.ScoreDistribution
@@ -22,6 +23,7 @@ data class MediaDetailsUiState(
     val isLoggedIn: Boolean = false,
 
     val details: MediaDetailsQuery.Media? = null,
+    val mangaMetadata: MangaBakaMetadata? = null,
     val openings: List<AnimeThemes.Theme>? = null,
     val endings: List<AnimeThemes.Theme>? = null,
 

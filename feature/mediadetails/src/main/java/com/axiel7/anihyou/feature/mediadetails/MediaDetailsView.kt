@@ -148,6 +148,14 @@ private fun MediaDetailsContent(
     }
     val isCurrentLanguageEn = LocalIsLanguageEn.current
     val bottomBarPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+    val mangaMetadata = uiState.mangaMetadata
+    val displayTitle = mangaMetadata?.preferredTitle ?: uiState.details?.title?.userPreferred
+    val displayDescription = mangaMetadata?.description ?: uiState.details?.description
+    val displayCover = mangaMetadata?.coverImageUrl ?: uiState.details?.coverImage?.large
+    val displayCoverFull = mangaMetadata?.coverImageUrl ?: uiState.details?.coverImage?.extraLarge
+    val displayFormat = mangaMetadata?.type ?: uiState.details?.format?.localized()
+    val displayStatus = mangaMetadata?.status ?: uiState.details?.status.localized()
+    val displayShareUrl = mangaMetadata?.primaryUrl ?: uiState.details?.siteUrlWithTitle().orEmpty()
 
     ErrorDialogHandler(uiState, onDismiss = { event?.onErrorDisplayed() })
 
@@ -185,7 +193,7 @@ private fun MediaDetailsContent(
                 title = {
                     if (isTopAppBarScrolled) {
                         Text(
-                            text = uiState.details?.title?.userPreferred.orEmpty(),
+                            text = displayTitle.orEmpty(),
                             overflow = TextOverflow.Ellipsis,
                             maxLines = 1,
                         )
@@ -204,7 +212,7 @@ private fun MediaDetailsContent(
                         )
                     }
                     ShareIconButton(
-                        url = { uiState.details?.siteUrlWithTitle().orEmpty() }
+                        url = { displayShareUrl }
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -255,7 +263,7 @@ private fun MediaDetailsContent(
             // Poster and basic info
             Row {
                 MediaPoster(
-                    url = uiState.details?.coverImage?.large,
+                    url = displayCover,
                     modifier = Modifier
                         .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
                         .size(
@@ -263,21 +271,19 @@ private fun MediaDetailsContent(
                             height = MEDIA_POSTER_BIG_HEIGHT.dp
                         )
                         .clickable(onClick = singleClick {
-                            uiState.details?.coverImage?.extraLarge
-                                ?.let(navActionManager::toFullscreenImage)
+                            displayCoverFull?.let(navActionManager::toFullscreenImage)
                         })
                 )
                 Column {
                     Text(
-                        text = uiState.details?.title?.userPreferred
+                        text = displayTitle
                             ?: stringResource(R.string.unknown),
                         modifier = Modifier
                             .padding(bottom = 8.dp, end = 8.dp)
                             .defaultPlaceholder(visible = uiState.isLoading)
                             .combinedClickable(
                                 onLongClick = {
-                                    uiState.details?.title?.userPreferred
-                                        ?.let { context.copyToClipBoard(it) }
+                                    displayTitle?.let { context.copyToClipBoard(it) }
                                 },
                                 onClick = { }
                             ),
@@ -285,7 +291,7 @@ private fun MediaDetailsContent(
                         fontWeight = FontWeight.Bold
                     )
                     TextIconHorizontal(
-                        text = uiState.details?.format?.localized()
+                        text = displayFormat
                             ?: stringResource(R.string.unknown),
                         icon = if (uiState.details?.basicMediaDetails?.isAnime() == true)
                             R.drawable.live_tv_24
@@ -303,7 +309,7 @@ private fun MediaDetailsContent(
                             .defaultPlaceholder(visible = uiState.isLoading)
                     )
                     TextIconHorizontal(
-                        text = uiState.details?.status.localized(),
+                        text = displayStatus,
                         icon = R.drawable.rss_feed_24,
                         modifier = Modifier
                             .padding(bottom = 8.dp)
@@ -378,11 +384,11 @@ private fun MediaDetailsContent(
                         append(stringResource(R.string.lorem_ipsun))
                     }
 
-                    uiState.details?.description.isNullOrBlank() -> buildAnnotatedString {
+                    displayDescription.isNullOrBlank() -> buildAnnotatedString {
                         append(stringResource(R.string.no_description))
                     }
 
-                    else -> uiState.details.description!!.htmlDecoded().toAnnotatedString()
+                    else -> displayDescription!!.htmlDecoded().toAnnotatedString()
                 },
                 modifier = Modifier
                     .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp)
@@ -404,7 +410,7 @@ private fun MediaDetailsContent(
             ) {
                 if (!isCurrentLanguageEn) {
                     TranslateIconButton(
-                        text = uiState.details?.description?.htmlStripped()
+                        text = displayDescription?.htmlStripped()
                     )
                 } else {
                     Spacer(modifier = Modifier.size(48.dp))
@@ -422,7 +428,7 @@ private fun MediaDetailsContent(
 
                 IconButton(
                     onClick = {
-                        uiState.details?.description?.let {
+                        displayDescription?.let {
                             context.copyToClipBoard(it.htmlStripped())
                         }
                     },

@@ -220,6 +220,18 @@ class MediaDetailsViewModel(
         }
     }
 
+    private fun fetchMangaBakaMetadata(details: MediaDetailsQuery.Media) {
+        mediaRepository.getMangaBakaMetadata(details)
+            .onEach { result ->
+                if (result is DataResult.Success) {
+                    mutableUiState.update { uiState ->
+                        uiState.copy(mangaMetadata = result.data)
+                    }
+                }
+            }
+            .launchIn(viewModelScope)
+    }
+
     init {
         mediaRepository.getMediaDetails(mediaId = arguments.id)
             .onEach { result ->
@@ -236,6 +248,11 @@ class MediaDetailsViewModel(
                     it.details?.idMal?.let { idMal ->
                         if (it.details.basicMediaDetails.type == MediaType.ANIME)
                             fetchAnimeThemes(idMal)
+                    }
+                    it.details?.let { details ->
+                        if (details.basicMediaDetails.type == MediaType.MANGA) {
+                            fetchMangaBakaMetadata(details)
+                        }
                     }
                 }
             }
