@@ -224,6 +224,8 @@ fun MediaInformationView(
                 tags.forEach { tag ->
                     TagChip(
                         name = tag,
+                        description = null,
+                        rank = null,
                         onClick = {
                             uiState.details?.basicMediaDetails?.type?.let { mediaType ->
                                 navigateToGenreTag(mediaType, null, tag)
@@ -393,7 +395,7 @@ fun MediaInformationView(
                 mangaMetadata?.trackerMappings?.forEach { mapping ->
                     AssistChip(
                         onClick = {
-                            mapping.url?.let(context::openActionView)
+                            mapping.url?.let { url -> context.openActionView(url) }
                         },
                         label = { Text(text = mapping.trackerName) },
                         modifier = Modifier.padding(horizontal = 4.dp),
