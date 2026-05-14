@@ -1,44 +1,131 @@
-# <img alt="app-icon" height="50" src="https://github.com/axiel7/AniHyou-android/blob/master/core/resources/src/main/res/mipmap-hdpi/ic_launcher_round.webp"/>AniHyou
+<div align="center">
 
-[![Downloads](https://img.shields.io/github/downloads/axiel7/AniHyou-android/total.svg)](https://github.com/axiel7/MoeList/releases/latest)
-[![Crowdin](https://badges.crowdin.net/anihyou/localized.svg)](https://crowdin.com/project/anihyou)
-[![Donate](https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg)](https://ko-fi.com/axiel7)
+<a href="https://xkana-shii.github.io/website/">
+    <img src="./.github/assets/yumehyou-logo.png" alt="YumeHyou logo" title="YumeHyou logo" width="80"/>
+</a>
 
-Another unofficial Android AniList client
+# YumeHyou [App](#)
 
-[<img alt="Google Play" height="80" src="https://play.google.com/intl/en_US/badges/images/generic/en_badge_web_generic.png"/>](https://play.google.com/store/apps/details?id=com.axiel7.anihyou)
-[<img alt="Get it on F-Droid" height="80" src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png">](https://f-droid.org/packages/com.axiel7.anihyou)
+### Unified anime & manga tracking
+Track, organize, discover, and manage your anime and manga across multiple services — all in one place on Android.
 
-iOS version [here](https://github.com/axiel7/AniHyou-iOS)
+[![GitHub downloads](https://img.shields.io/github/downloads/xkana-shii/yumehyou/total?label=downloads&labelColor=27303D&color=0D1117&logo=github&logoColor=FFFFFF&style=flat)](YOUR_RELEASE_LINK)
 
-Get latest beta version from [nightly.link](https://nightly.link/axiel7/AniHyou-android/workflows/build-upload-android/develop)
+[![CI](https://img.shields.io/github/actions/workflow/status/xkana-shii/yumehyou/build.yml?labelColor=27303D)](YOUR_ACTIONS_LINK)
+[![License: GPL-3.0](https://img.shields.io/github/license/xkana-shii/yumehyou?labelColor=27303D&color=0877d2)](/LICENSE)
 
-Follow the development on the official Discord server:
+## Download
 
-[![Discord Banner 3](https://discordapp.com/api/guilds/741059285122940928/widget.png?style=banner2)](https://discord.gg/CTv3WdfxHh)
+[![YumeHyou Stable](https://img.shields.io/github/release/xkana-shii/yumehyou.svg?maxAge=3600&label=Stable&labelColor=06599d&color=043b69)](https://github.com/xkana-shii/YumeHyou/releases/latest)
 
-# Screenshots
-![Screenshots](https://github.com/axiel7/AniHyou-android/blob/master/screenshots.webp)
+*Requires Android 8.0 or higher.*
 
-## Coming features
-- [See project](https://github.com/users/axiel7/projects/2/views/1)
+## Features
 
-# Donate 💸
-Support the development of AniHyou by making a donation via:
+<div align="left">
 
-[Ko-Fi](https://ko-fi.com/axiel7)
+### Unified Tracking
+* Sync your anime and manga progress across multiple tracking services.
+* Supported trackers:
+  * MyAnimeList
+  * AniList
+  * MangaUpdates
+  * MangaBaka
+* Optional synced tracking across logged-in services.
+* Unified tracking history and activity logs.
 
-BTC
-```
-3KKjJuorh9se2jUo1Hr6MFgXhnBWbj5fTP
-```
+### Library Management
+* Anime, manga, or combined library views.
+* Status tabs for quick navigation.
+* Advanced filters and sorting.
+* Random series picker.
+* Separate library and browse layouts.
+* Hide selected library entries.
+* Bulk-friendly library organization.
 
-ETH
-```
-0xBd20dD0e036B246F879EeFde52601f0fBbeC69c0
-```
+### Discovery
+* Seasonal anime browsing.
+* Top, trending, upcoming, and airing anime.
+* Manga discovery via MangaBaka.
+* Calendar browsing.
+* Advanced search with anime, manga, character, staff, studio, and user filtering.
+* Unified search with deduplicated results.
 
-LTC
-```
-MRw5XPLsM9SVf48tv4nwQoY12nMXaiVzmD
-```
+### Rich Metadata
+* Anime metadata powered primarily by AniList.
+* Manga metadata powered primarily by MangaBaka.
+* Metadata fallback support for reliability.
+* Detailed media pages with:
+  * episodes
+  * openings
+  * staff
+  * characters
+  * reviews
+  * recommendations
+  * related works
+  * collections
+  * news
+  * external links
+
+### Profiles & Statistics
+* Consolidated profile overview across supported services.
+* Detailed anime and manga statistics.
+* Favorites support.
+* Followers/following integration where supported.
+* Recent activity and library snapshots.
+
+### Automation & Utilities
+* Manual exports for all supported trackers.
+* Automatic hourly or daily exports.
+* Deep-link integrations with supported apps and services.
+* Push notifications.
+* Tablet mode support.
+* Configurable themes and personalization.
+
+### Customization
+* Multiple theme options.
+* Title language preferences.
+* Adult content filtering.
+* Tracker-specific settings.
+* Flexible scoring and display preferences.
+* Highly configurable browsing experience.
+
+*And more to come.*
+
+</div>
+
+### Repositories
+
+[![xkana-shii/website - GitHub](https://github-readme-stats.vercel.app/api/pin/?username=xkana-shii&repo=website&bg_color=161B22&text_color=c9d1d9&title_color=0877d2&icon_color=0877d2&border_radius=8&hide_border=true&description_lines_count=2)](https://github.com/xkana-shii/website/)
+
+## Credits
+
+YumeHyou is built on top of open-source work from the community.
+
+Special thanks to:
+
+AniHyou
+MoeList
+BakaHyou
+all contributors to upstream projects
+
+Thank you to everyone who contributes to YumeHyou.
+
+<a href="https://github.com/xkana-shii/YumeHyou/graphs/contributors">
+    <img src="https://contrib.rocks/image?repo=xkana-shii/YumeHyou" alt="YumeHyou contributors" title="YumeHyou contributors" width="800"/>
+</a>
+
+## Disclaimer
+
+YumeHyou does not host, distribute, or provide any anime, manga, or other copyrighted content.
+
+This application acts solely as a tracking, metadata aggregation, and management tool.
+
+YumeHyou is not affiliated with:
+MyAnimeList
+AniList
+MangaUpdates
+MangaBaka
+or any external content provider
+
+</div>

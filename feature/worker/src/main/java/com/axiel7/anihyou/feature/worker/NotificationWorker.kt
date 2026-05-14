@@ -22,8 +22,8 @@ import com.axiel7.anihyou.core.base.DataResult
 import com.axiel7.anihyou.core.domain.repository.DefaultPreferencesRepository
 import com.axiel7.anihyou.core.domain.repository.NotificationRepository
 import com.axiel7.anihyou.core.domain.repository.UserRepository
-import com.axiel7.anihyou.core.model.notification.NotificationTypeGroup
 import com.axiel7.anihyou.core.model.notification.NotificationInterval
+import com.axiel7.anihyou.core.model.notification.NotificationTypeGroup
 import com.axiel7.anihyou.core.network.NetworkVariables
 import com.axiel7.anihyou.core.network.type.NotificationType
 import com.axiel7.anihyou.core.resources.R
@@ -42,20 +42,21 @@ class NotificationWorker(
     private val defaultPreferencesRepository: DefaultPreferencesRepository,
     private val networkVariables: NetworkVariables,
 ) : CoroutineWorker(context, params) {
-
     // AniList API does not have a socket for notifications, so we schedule a work with an interval
     // chosen by the user and check for new notifications
     @RequiresPermission(android.Manifest.permission.POST_NOTIFICATIONS)
     override suspend fun doWork(): Result {
         try {
             setForegroundSafely()
-            val accessToken = defaultPreferencesRepository.accessToken.firstOrNull()
-                ?: return Result.failure()
+            val accessToken =
+                defaultPreferencesRepository.accessToken.firstOrNull()
+                    ?: return Result.failure()
             networkVariables.accessToken = accessToken
             // check first the unread count so we can skip early if there aren't unread notifications
             // e.g.: the user read the notifications on web
-            val unreadCount = userRepository.getUnreadNotificationCount().firstOrNull()
-                ?: return Result.failure()
+            val unreadCount =
+                userRepository.getUnreadNotificationCount().firstOrNull()
+                    ?: return Result.failure()
             if (unreadCount <= 0) return Result.success()
 
             val result = notificationsRepository.getNewNotifications(unreadCount)
@@ -64,11 +65,13 @@ class NotificationWorker(
                 // since AniList API does not have a filter for createdAt we need to filter
                 // locally the new notifications by saving the latest createdAt to preferences
                 // so we don't notify the same notification more than once
-                val lastCreatedAt = defaultPreferencesRepository.lastNotificationCreatedAt
-                    .firstOrNull() ?: 0
-                val newNotifications = result.data!!.filter {
-                    it.createdAt != null && it.createdAt!! > lastCreatedAt
-                }
+                val lastCreatedAt =
+                    defaultPreferencesRepository.lastNotificationCreatedAt
+                        .firstOrNull() ?: 0
+                val newNotifications =
+                    result.data!!.filter {
+                        it.createdAt != null && it.createdAt!! > lastCreatedAt
+                    }
                 if (newNotifications.isNotEmpty()) {
                     newNotifications.firstOrNull()?.createdAt?.let { createdAt ->
                         defaultPreferencesRepository.setLastNotificationCreatedAt(createdAt)
@@ -78,34 +81,45 @@ class NotificationWorker(
                     var pendingIntent: PendingIntent? = null
                     // if the notification contains a media, open details on click
                     // TODO: handle user, activity and thread
-                    if (it.type == NotificationType.AIRING
-                        || NotificationTypeGroup.MEDIA.values?.contains(it.type) == true
+                    if (it.type == NotificationType.AIRING ||
+                        NotificationTypeGroup.MEDIA.values?.contains(it.type) == true
                     ) {
-                        val intent = applicationContext.packageManager
-                            .getLaunchIntentForPackage(APP_PACKAGE_NAME)
-                            ?.apply {
-                                action = "media_details"
-                                putExtra("media_id", it.contentId)
-                                flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                        val intent =
+                            applicationContext.packageManager
+                                .getLaunchIntentForPackage(APP_PACKAGE_NAME)
+                                ?.apply {
+                                    action = "media_details"
+                                    putExtra("media_id", it.contentId)
+                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or
                                         Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            }
-                        pendingIntent = PendingIntent.getActivity(
-                            applicationContext, it.id, intent,
-                            PendingIntent.FLAG_IMMUTABLE
-                        )
+                                }
+                        pendingIntent =
+                            PendingIntent.getActivity(
+                                applicationContext,
+                                it.id,
+                                intent,
+                                PendingIntent.FLAG_IMMUTABLE,
+                            )
                     }
 
-                    val image = (it.largeImageUrl ?: it.imageUrl)?.let { url ->
-                        applicationContext.getBitmapFromUrl(url)
-                    }
+                    val image =
+                        (it.largeImageUrl ?: it.imageUrl)?.let { url ->
+                            applicationContext.getBitmapFromUrl(url)
+                        }
 
-                    val title = if (it.type == NotificationType.AIRING) {
-                        it.mediaTitle() ?: it.text
-                    } else it.text
+                    val title =
+                        if (it.type == NotificationType.AIRING) {
+                            it.mediaTitle() ?: it.text
+                        } else {
+                            it.text
+                        }
 
-                    val text = if (it.type == NotificationType.AIRING) {
-                        it.numEpisode()?.let { ep -> "Episode $ep aired" }.orEmpty()
-                    } else ""
+                    val text =
+                        if (it.type == NotificationType.AIRING) {
+                            it.numEpisode()?.let { ep -> "Episode $ep aired" }.orEmpty()
+                        } else {
+                            ""
+                        }
 
                     applicationContext.showNotification(
                         notificationId = it.id,
@@ -115,7 +129,7 @@ class NotificationWorker(
                         largeIcon = image,
                         bigPicture = image.takeIf { _ -> it.isMedia },
                         pendingIntent = pendingIntent,
-                        group = "default"
+                        group = "default",
                     )
                 }
                 if (newNotifications.size > 1) {
@@ -125,33 +139,35 @@ class NotificationWorker(
                         title = "${newNotifications.size} ${applicationContext.getString(R.string.notifications)}",
                         text = "",
                         group = "default",
-                        isGroupSummary = true
+                        isGroupSummary = true,
                     )
                 }
 
                 Result.success()
-            } else Result.retry()
+            } else {
+                Result.retry()
+            }
         } catch (e: Exception) {
             Log.e(TAG, "doWork: ", e)
             return Result.retry()
         }
     }
 
-    override suspend fun getForegroundInfo(): ForegroundInfo {
-        return ForegroundInfo(
+    override suspend fun getForegroundInfo(): ForegroundInfo =
+        ForegroundInfo(
             0,
-            NotificationCompat.Builder(applicationContext, SYNC_CHANNEL_ID)
+            NotificationCompat
+                .Builder(applicationContext, SYNC_CHANNEL_ID)
                 .setContentTitle(applicationContext.getString(R.string.notifications))
-                .setSmallIcon(R.drawable.anihyou_24)
+                .setSmallIcon(R.drawable.anihyou_yh_24)
                 .setAutoCancel(true)
                 .build(),
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
             } else {
                 0
-            }
+            },
         )
-    }
 
     private suspend fun setForegroundSafely() {
         try {
@@ -174,24 +190,22 @@ class NotificationWorker(
                 // TODO: create different channels for every NotificationType?
                 createNotificationChannel(
                     id = DEFAULT_CHANNEL_ID,
-                    name = getString(R.string.default_setting)
+                    name = getString(R.string.default_setting),
                 )
                 createNotificationChannel(
                     id = SYNC_CHANNEL_ID,
-                    name = getString(R.string.update_interval)
+                    name = getString(R.string.update_interval),
                 )
             }
         }
 
-        fun WorkManager.scheduleNotificationWork(
-            interval: NotificationInterval
-        ) {
+        fun WorkManager.scheduleNotificationWork(interval: NotificationInterval) {
             val notificationWorkRequest =
                 PeriodicWorkRequestBuilder<NotificationWorker>(
                     repeatInterval = interval.value,
                     repeatIntervalTimeUnit = interval.timeUnit,
                     flexTimeInterval = 1,
-                    flexTimeIntervalUnit = TimeUnit.HOURS
+                    flexTimeIntervalUnit = TimeUnit.HOURS,
                 ).apply {
                     addTag(WORK_NAME)
                     setConstraints(Constraints(requiredNetworkType = NetworkType.CONNECTED))
@@ -201,7 +215,7 @@ class NotificationWorker(
             enqueueUniquePeriodicWork(
                 WORK_NAME,
                 ExistingPeriodicWorkPolicy.UPDATE,
-                notificationWorkRequest
+                notificationWorkRequest,
             )
         }
 

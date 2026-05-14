@@ -626,6 +626,6 @@
         <item quantity="one">%d min</item>
         <item quantity="other">%d min</item>
     </plurals>
-    <string name="login_required_in_phone">Pour utiliser cette application, vous devez d\'abord vous connecter en ouvrant l\'application AniHyou installée sur votre téléphone</string>
-    <string name="app_installed_required">Aucun appareil à proximité n\'a été détecté, veuillez installer la dernière version de l\'application AniHyou sur votre téléphone Android</string>
+    <string name="login_required_in_phone">Pour utiliser cette application, vous devez d\'abord vous connecter en ouvrant l\'application YumeHyou installée sur votre téléphone</string>
+    <string name="app_installed_required">Aucun appareil à proximité n\'a été détecté, veuillez installer la dernière version de l\'application YumeHyou sur votre téléphone Android</string>
 </resources>
